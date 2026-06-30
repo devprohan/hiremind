@@ -45,8 +45,8 @@ const registerUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: error.message
-        })
+            message: error.message,
+        });
     }
 };
 
@@ -104,12 +104,79 @@ const loginUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: error.message
-        })
+            message: error.message,
+        });
     }
 };
+
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        console.log(req.body);
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "current password and new password are required",
+            });
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "user not found",
+            });
+        }
+
+        // compare current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Current password is incorrect",
+            });
+        }
+
+        // Hash new password
+        const hashPassword = await bcrypt.hash(newPassword, 10);
+
+        // update password
+        user.password = hashPassword;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "password changed successfully",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+const logoutUser = async (req, res) => {
+    try {
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+}
 
 module.exports = {
     registerUser,
     loginUser,
+    changePassword,
+    logoutUser
 };

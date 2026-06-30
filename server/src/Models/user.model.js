@@ -30,6 +30,39 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "admin"],
       default: "student",
     },
+    college: {
+      type: String,
+      default: "",
+    },
+    branch: {
+      type: String,
+      default: "",
+    },
+    graduationYear: {
+      type: Number,
+    },
+    cgpa: {
+      type: Number,
+      minlength: 1,
+      maxlength: 10,
+    },
+    skills: [
+      {
+        type: String,
+      },
+    ],
+    bio: {
+      type: String,
+      default: "",
+    },
+    github: {
+      type: String,
+      default: "",
+    },
+    linkedin: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

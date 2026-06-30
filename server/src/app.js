@@ -7,13 +7,14 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, rea) => {
+app.get("/", (req, res) => {
     res.send("HireMind Backend Running");
 });
 
 // Routes Middleware
-app.use("/api/auth/v1", authRoutes)
-app.use("/api/users/v1", userRoutes)
+app.use("/api/auth/", authRoutes)
+app.use("/api/users/", userRoutes)
 
 module.exports = app
