@@ -1,10 +1,8 @@
 
-const App = () => {
-  return (
-    <div>
-      <h1>Welcome to HireMind FrontEnd</h1>
-    </div>
-  )
+import LandingPage from "./pages/LandingPage";
+
+function App() {
+  return <LandingPage />;
 }
 
-export default App
+export default App;
