@@ -7,40 +7,72 @@ const resumeSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+
         resumeUrl: {
             type: String,
             required: true,
         },
+
         publicId: {
             type: String,
             required: true,
         },
+
         originalName: {
             type: String,
             required: true,
         },
+
         fileSize: {
-            type: String,
+            type: Number,
             required: true,
         },
+
+        resumeText: {
+            type: String,
+            default: "",
+        },
+
         atsScore: {
             type: Number,
             default: 0,
         },
+
         analysis: {
             type: String,
             default: "",
         },
+
         skills: [
             {
                 type: String,
             },
         ],
+
         missingSkills: [
             {
                 type: String,
             },
         ],
+
+        strengths: [
+            {
+                type: String,
+            },
+        ],
+
+        weaknesses: [
+            {
+                type: String,
+            },
+        ],
+
+        suggestions: [
+            {
+                type: String,
+            },
+        ],
+
         status: {
             type: String,
             enum: ["Uploaded", "Processing", "Completed"],
@@ -52,6 +84,4 @@ const resumeSchema = new mongoose.Schema(
     },
 );
 
-const Resume = mongoose.model("Resume", resumeSchema);
-
-module.exports = Resume;
+module.exports = mongoose.model("Resume", resumeSchema);
