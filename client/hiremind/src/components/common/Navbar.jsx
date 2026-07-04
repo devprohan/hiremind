@@ -1,31 +1,26 @@
-import { motion } from "framer-motion";
-
-const Navbar = () => {
+import Logo from "./Logo";
+export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-lg border-b">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-5">
-
-        <h1 className="text-3xl font-bold">
-          Hire<span className="text-violet-600">Mind</span>
-        </h1>
-
-        <div className="hidden md:flex gap-8">
-          <a href="#">Features</a>
-          <a href="#">About</a>
-          <a href="#">Contact</a>
+    <nav className="sticky top-0 z-50 border-b border-violet-100 bg-white/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <Logo />
+        <div className="hidden gap-8 text-sm text-slate-600 md:flex">
+          <a href="#features">Features</a>
+          <a href="#how">How It Works</a>
+          <a href="#about">About</a>
         </div>
-
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-violet-600 text-white px-6 py-3 rounded-xl"
-        >
-          Get Started
-        </motion.button>
-
+        <div className="flex gap-3">
+          <a href="/register" className="rounded-xl px-4 py-2">
+            Login
+          </a>
+          <a
+            href="/register"
+            className="rounded-xl bg-gradient-to-r from-violet-600 to-pink-500 px-5 py-2 text-white"
+          >
+            Get Started
+          </a>
+        </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

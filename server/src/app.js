@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 
 // Routes Middleware
 app.use("/api/auth/", authRoutes);
-app.use("/api/users/", userRoutes);
-app.use("/api/resume/", resumeRoutes);
+ app.use("/api/users/", userRoutes);
+//  app.use("/api/resume/", resumeRoutes);
 
 module.exports = app;
