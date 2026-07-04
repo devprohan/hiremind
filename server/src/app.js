@@ -4,6 +4,7 @@ const authRoutes = require("./Routes/auth.routes.js");
 const userRoutes = require("./Routes/user.routes.js");
 const resumeRoutes = require("./Routes/resume.routes.js");
 const dashboardRoutes = require("./Routes/dashboard.routes.js")
+const jobRoutes = require("./Routes/job.routes.js")
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth/", authRoutes);
 app.use("/api/users/", userRoutes);
 app.use("/api/resume/", resumeRoutes);
-app.use("/api/dashboard",dashboardRoutes)
+app.use("/api/dashboard", dashboardRoutes)
+app.use("/api/job", jobRoutes)
 
 module.exports = app;
