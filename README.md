@@ -127,3 +127,43 @@ Response
                        │
                        ▼
       Frontend Displays Questions
+
+# Career Roadmap AI Flow :
+
+        User Enters Career Goal
+                │
+                ▼
+        POST /career/roadmap
+                │
+                ▼
+        Authenticate User
+                │
+                ▼
+        Fetch Latest Resume
+                │
+                ▼
+        Resume Analysis
+        +
+        Skills
+        +
+        Missing Skills
+        +
+        Career Goal
+                │
+                ▼
+        Google Gemini AI
+                │
+                ▼
+        Generate
+
+        • 6-Month Roadmap
+        • Monthly Topics
+        • Projects
+        • Learning Resources
+        • Certifications
+                │
+                ▼
+        Return JSON
+                │
+                ▼
+        Display Roadmap
