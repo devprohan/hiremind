@@ -83,3 +83,47 @@ Response
                      ▼
 
                Send Response
+
+# 🎯 AI Interview Question Generator Flow :
+
+                User Dashboard
+                       │
+                       ▼
+          Select "Interview Generator"
+                       │
+                       ▼
+          Enter Target Job Role (Optional)
+                       │
+                       ▼
+      POST /api/interview/generate
+                       │
+                       ▼
+            Backend (Node.js + Express)
+                       │
+                       ▼
+     Authenticate User using JWT Token
+                       │
+                       ▼
+      Fetch Latest Resume from MongoDB
+                       │
+                       ▼
+ Resume Analysis + Extracted Skills + Job Role
+                       │
+                       ▼
+            Google Gemini AI
+                       │
+                       ▼
+      Generate Personalized Questions
+                       │
+                       ▼
+        ┌─────────────────────────────┐
+        │ Technical Questions (10)    │
+        │ Behavioral Questions (5)    │
+        │ HR Questions (5)            │
+        └─────────────────────────────┘
+                       │
+                       ▼
+         Return JSON Response to Client
+                       │
+                       ▼
+      Frontend Displays Questions
