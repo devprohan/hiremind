@@ -17,5 +17,7 @@ export const loginUser = async (userData) => {
     userData
   );
 
+  localStorage.setItem("token", response.data.token);
+
   return response.data;
 };

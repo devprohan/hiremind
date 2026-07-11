@@ -1,84 +1,40 @@
-import React from 'react'
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import { LayoutDashboard } from "lucide-react";
-import { Upload } from "lucide-react";
-import { FileUser } from "lucide-react";
-import {MessageSquareText} from "lucide-react";
-import {User} from "lucide-react";
-import {Settings} from "lucide-react";
-import {SearchCheck} from "lucide-react";
-
-
-const Sidebar = () => {
-    const navigate = useNavigate();
-     const location = useLocation();
-     console.log(location);
-     
-    const items = [
-        {name: "Dashboard",
-        path: "/dashboard",
-        icon: LayoutDashboard,
-        },
-        {name: "Upload Resume",
-        path: "/uploadresume",
-        icon: Upload,
-        },
-        {name: "My Resume",
-        path: "/myresume",
-        icon: FileUser,
-        },
-        {name: "Job Match",
-        path: "/jobmatch",
-        icon: SearchCheck,
-        },
-        {name: "Interview Prep",
-        path: "/interviewprep",
-        icon: MessageSquareText,
-        },
-        {name: "Profile",
-        path: "/profile",
-        icon: User,
-        },
-        {name: "Settings",
-        path: "/settings",
-        icon: Settings,
-        }
-
-
-
-
-        
-    ]
+import { NavLink } from "react-router-dom";
+const items = [
+  ["Dashboard", "/dashboard"],
+  ["Upload Resume", "/dashboard/upload-resume"],
+  ["My Resumes", "/dashboard/my-resume"],
+  ["AI Job Match", "/dashboard/job-match"],
+  ["Interview Prep", "/dashboard/interview-prep"],
+  ["Profile", "/dashboard/profile"],
+  ["Settings", "/dashboard/settings"],
+];
+export default function Sidebar() {
+ 
   return (
-
-    
-        <aside className='flex flex-col  h-screen '>
-            <div >
-            lOGo
-            </div>
-
-            <div className='flex-1'>
-                
-                {items.map((item) =>{
-                    const Icon = item.icon;
-                   return (
-                   <p className="flex items-center gap-3" key={item.path} onClick={() => 
-                     navigate(item.path)
-                   }
-                   
-                   ><Icon/>{item.name}</p>
-                )
-                })}
-            </div>
-
-            <div >
-                logout
-            </div>
-        </aside>
-        
-    
-  )
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r bg-white p-5">
+      <div className="mb-10 text-2xl font-black">
+        Hire<span className="text-violet-600">Mind</span>
+      </div>
+     
+         <nav className="flex-1 space-y-2">
+        {items.map(([n, p]) => (
+          <NavLink
+            key={p}
+            to={p}
+            end={p === "/dashboard"}
+            className={({ isActive }) =>
+              `block rounded-xl px-4 py-3 text-sm ${isActive ? "bg-violet-100 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`
+            }
+          >
+            {n}
+          </NavLink>
+        ))}
+      </nav>
+      
+     
+      <button className="mt-auto w-full rounded-xl border border-red-400 px-4 py-3 text-left text-red-500">
+        Logout
+      </button>
+    </aside>
+  );
 }
-
-export default Sidebar
