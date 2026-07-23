@@ -25,7 +25,7 @@ app.use("/api/users/", userRoutes);
 app.use("/api/resume/", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/job", jobRoutes);
- app.use("/api/interview", interviewRoutes)
+ //app.use("/api/interview", interviewRoutes)
 app.use("/api/career", careerRoutes)
 
 

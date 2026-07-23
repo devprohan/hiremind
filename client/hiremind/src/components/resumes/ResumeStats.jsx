@@ -4,10 +4,18 @@ import {
   Trophy,
 } from "lucide-react";
 
-const stats = [
+
+
+export default function ResumeStats({
+  total,
+  average,
+  highest
+}) {
+
+  const stats = [
   {
     title: "Total Resumes",
-    value: "12",
+    value: total,
     subtitle: "All uploaded resumes",
     icon: FileText,
     bg: "bg-violet-100",
@@ -15,7 +23,7 @@ const stats = [
   },
   {
     title: "Average ATS Score",
-    value: "84",
+    value: average,
     subtitle: "Across all resumes",
     icon: Star,
     bg: "bg-emerald-100",
@@ -23,15 +31,13 @@ const stats = [
   },
   {
     title: "Highest ATS Score",
-    value: "92",
+    value: highest,
     subtitle: "Your best performance",
     icon: Trophy,
     bg: "bg-amber-100",
     color: "text-amber-600",
   },
 ];
-
-export default function ResumeStats() {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       {stats.map((item) => {
