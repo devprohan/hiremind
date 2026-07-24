@@ -10,6 +10,7 @@ import MyResumesPage from "./pages/MyResumePage";
 
 import DashboardLayout from "./layouts/DashboardLayout";
 import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
+import ProtectedRoute from "./components/protect/protectRoute";
 
 function App() {
   return (
@@ -20,15 +21,15 @@ function App() {
 
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/dashboard" element={<DashboardLayout />}>
+      <Route path="/dashboard" element={<ProtectedRoute> <DashboardLayout /> </ProtectedRoute>}>
         <Route index element={<DashboardPage />} />
         <Route path="upload-resume" element={<UploadResumePage />} />
         <Route path="my-resume" element={<MyResumesPage />} />
         <Route path="resume/:id" element={<ResumeAnalysisPage />} />
       </Route>
-      
 
-      
+
+
     </Routes>
   );
 }
