@@ -40,9 +40,12 @@ ${resumeText}
     text = text.trim();
 
     return text;
-  } catch (error) {
-    console.error("Gemini Error:", error);
-    throw error;
+  }catch (error) {
+  console.error("Gemini Error:", error);
+  console.error("Message:", error.message);
+  console.error("Stack:", error.stack);
+
+  throw error;
   }
 };
 

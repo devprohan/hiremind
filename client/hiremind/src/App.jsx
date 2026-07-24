@@ -9,6 +9,7 @@ import UploadResumePage from "./pages/UploadResumePage";
 import MyResumesPage from "./pages/MyResumePage";
 
 import DashboardLayout from "./layouts/DashboardLayout";
+import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
 
 function App() {
   return (
@@ -23,8 +24,11 @@ function App() {
         <Route index element={<DashboardPage />} />
         <Route path="upload-resume" element={<UploadResumePage />} />
         <Route path="my-resume" element={<MyResumesPage />} />
+        <Route path="resume/:id" element={<ResumeAnalysisPage />} />
       </Route>
-      <Route path="/test" element={<h1>TEST PAGE</h1>} />
+      
+
+      
     </Routes>
   );
 }
