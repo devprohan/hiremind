@@ -11,7 +11,8 @@ import MyResumesPage from "./pages/MyResumePage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
 import ProtectedRoute from "./components/protect/protectRoute";
-
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 function App() {
   return (
     <Routes>
@@ -21,15 +22,22 @@ function App() {
 
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/dashboard" element={<ProtectedRoute> <DashboardLayout /> </ProtectedRoute>}>
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            {" "}
+            <DashboardLayout />{" "}
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<DashboardPage />} />
         <Route path="upload-resume" element={<UploadResumePage />} />
         <Route path="my-resume" element={<MyResumesPage />} />
         <Route path="resume/:id" element={<ResumeAnalysisPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+         <Route path="settings" element={<SettingsPage />} />
       </Route>
-
-
-
     </Routes>
   );
 }

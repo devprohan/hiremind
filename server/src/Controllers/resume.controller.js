@@ -29,18 +29,32 @@ const uploadResume = async (req, res) => {
     const analysis = await analyzeResume(resumeText);
 
     // convert JSON string -> object
-    const result = JSON.parse(analysis);
-
+    let result;
+    try {
+      result = JSON.parse(analysis);
+    } catch (err) {
+      throw new Error("Gemini returned invalid JSON");
+    }
+    console.log("========== GEMINI ==========");
+    console.log(result);
+    console.log("============================");
     // update resume
     // Save AI result
     resume.atsScore = result.atsScore;
+    resume.breakdown = result.breakdown || {
+      content: 0,
+      formatting: 0,
+      skills: 0,
+      keywords: 0,
+    };
     resume.analysis = result.summary;
-    resume.skills = (result.skills || []).map((skill) =>
-      typeof skill === "string" ? skill : skill.name,
-    );
-    resume.missingSkills = (result.missingSkills || []).map((skill) =>
-      typeof skill === "string" ? skill : skill.name,
-    );
+    resume.skills =
+      result.skills && typeof result.skills === "object" ? result.skills : {};
+
+    resume.missingSkills =
+      result.missingSkills && typeof result.missingSkills === "object"
+        ? result.missingSkills
+        : {};
     resume.strengths = result.strengths || [];
     resume.weaknesses = result.weaknesses || [];
     resume.suggestions = result.suggestions || [];
@@ -171,9 +185,21 @@ const reanalyzeResume = async (req, res) => {
     const result = JSON.parse(analysis);
 
     resume.atsScore = result.atsScore;
+    resume.breakdown = result.breakdown || {
+      content: 0,
+      formatting: 0,
+      skills: 0,
+      keywords: 0,
+    };
+
     resume.analysis = result.summary;
-    resume.skills = result.skills || [];
-    resume.missingSkills = result.missingSkills || [];
+    resume.skills =
+      result.skills && typeof result.skills === "object" ? result.skills : {};
+
+    resume.missingSkills =
+      result.missingSkills && typeof result.missingSkills === "object"
+        ? result.missingSkills
+        : {};
     resume.strengths = result.strengths || [];
     resume.weaknesses = result.weaknesses || [];
     resume.suggestions = result.suggestions || [];

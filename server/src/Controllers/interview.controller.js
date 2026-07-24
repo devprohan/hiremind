@@ -1,4 +1,4 @@
-const { data } = require("react-router");
+//const { data } = require("react-router");
 const Resume = require("../Models/resume.model.js")
 const generateInterviewQuestions = require("../utils/interviewGenerator.js")
 

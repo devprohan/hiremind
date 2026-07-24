@@ -1,13 +1,10 @@
-import {
-  FileText,
-  Eye,
-  Download,
-  Trash2,
-} from "lucide-react";
+import { FileText, Eye, Download, Trash2 } from "lucide-react";
 
-export default function ResumeCard({  resume,
-  onView,
-  onDelete }) {
+export default function ResumeCard({ resume, onView, onDelete }) {
+  const skills = Array.isArray(resume.skills)
+    ? resume.skills
+    : Object.values(resume.skills || {}).flat();
+
   const scoreColor = () => {
     if (resume.atsScore >= 90)
       return "text-emerald-600 bg-emerald-50 border-emerald-200";
@@ -20,12 +17,9 @@ export default function ResumeCard({  resume,
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-
       {/* Top */}
       <div className="flex items-start justify-between">
-
         <div className="flex gap-4">
-
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100">
             <FileText className="text-violet-600" size={28} />
           </div>
@@ -43,28 +37,21 @@ export default function ResumeCard({  resume,
               {`${(resume.fileSize / 1024).toFixed(1)} KB`}
             </p>
           </div>
-
         </div>
 
         <div
           className={`rounded-2xl border px-4 py-2 text-center ${scoreColor()}`}
         >
-          <p className="text-3xl font-black">
-            {resume.atsScore}
-          </p>
+          <p className="text-3xl font-black">{resume.atsScore}</p>
 
-          <p className="text-xs font-semibold">
-            ATS Score
-          </p>
+          <p className="text-xs font-semibold">ATS Score</p>
         </div>
-
       </div>
 
       {/* Skills */}
 
       <div className="mt-6 flex flex-wrap gap-2">
-
-       {(resume.skills || []).map((skill) => (
+        {skills.slice(0, 5).map((skill) => (
           <span
             key={skill}
             className="rounded-full bg-violet-100 px-3 py-1 text-xs font-medium text-violet-700"
@@ -72,37 +59,35 @@ export default function ResumeCard({  resume,
             {skill}
           </span>
         ))}
-
       </div>
 
       {/* Bottom */}
 
       <div className="mt-6 flex items-center justify-between border-t pt-5">
-
-        <button className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm transition hover:bg-slate-100" 
-          onClick={() => onView(resume._id)}>
+        <button
+          className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm transition hover:bg-slate-100"
+          onClick={() => onView(resume._id)}
+        >
           <Eye size={16} />
           View
         </button>
 
         <button
-  onClick={() => window.open(resume.resumeUrl, "_blank")}
-  className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm transition hover:bg-slate-100"
->
+          onClick={() => window.open(resume.resumeUrl, "_blank")}
+          className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm transition hover:bg-slate-100"
+        >
           <Download size={16} />
           Download
         </button>
 
-       <button
-  onClick={() => onDelete(resume._id)}
-  className="flex items-center gap-2 rounded-xl border border-red-200 px-4 py-2 text-sm text-red-500 transition hover:bg-red-50"
->
+        <button
+          onClick={() => onDelete(resume._id)}
+          className="flex items-center gap-2 rounded-xl border border-red-200 px-4 py-2 text-sm text-red-500 transition hover:bg-red-50"
+        >
           <Trash2 size={16} />
           Delete
         </button>
-
       </div>
-
     </div>
   );
 }

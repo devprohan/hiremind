@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink ,useNavigate} from "react-router-dom";
 const items = [
   ["Dashboard", "/dashboard"],
   ["Upload Resume", "/dashboard/upload-resume"],
@@ -9,7 +9,17 @@ const items = [
   ["Settings", "/dashboard/settings"],
 ];
 export default function Sidebar() {
- 
+ const navigate = useNavigate();
+  
+
+  const handleLogout = () => {
+    if (!window.confirm("Are you sure you want to logout?")) return;
+
+    localStorage.removeItem("token");
+
+    navigate("/login", { replace: true });
+  };
+
   return (
     <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r bg-white p-5">
       <div className="mb-10 text-2xl font-black">
@@ -32,7 +42,8 @@ export default function Sidebar() {
       </nav>
       
      
-      <button className="mt-auto w-full rounded-xl border border-red-400 px-4 py-3 text-left text-red-500">
+      <button className="mt-auto w-full rounded-xl border border-red-400 px-4 py-3 text-left text-red-500" 
+      onClick={handleLogout}>
         Logout
       </button>
     </aside>

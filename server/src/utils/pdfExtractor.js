@@ -2,25 +2,27 @@ const axios = require("axios");
 const pdf = require("pdf-parse");
 
 const extractTextFromPDF = async (pdfUrl) => {
-    try {
-        console.log("PDF URL:", pdfUrl);
+  try {
+    console.log("PDF URL:", pdfUrl);
 
-        const response = await axios.get(pdfUrl, {
-            responseType: "arraybuffer",
-        });
+    const response = await axios.get(pdfUrl, {
+      responseType: "arraybuffer",
+    });
 
-        console.log("Downloaded Successfully");
+    console.log("Downloaded Successfully");
 
-        const data = await pdf(response.data);
+    console.log("Content-Type:", response.headers["content-type"]);
+    console.log("First 10 bytes:", Buffer.from(response.data).slice(0, 10));
 
-        console.log("Text Extracted");
+    const data = await pdf(response.data);
 
-        return data.text;
+    console.log("Text Extracted");
 
-    } catch (error) {
-        console.log(error);   
-        throw new Error("Failed to extract PDF text");
-    }
+    return data.text;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to extract PDF text");
+  }
 };
 
 module.exports = extractTextFromPDF;

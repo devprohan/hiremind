@@ -4,6 +4,13 @@ import { loginUser } from "../services/authService";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+ 
+
+// useEffect(() => {
+//   if (localStorage.getItem("token")) {
+//     navigate("/dashboard", { replace: true });
+//   }
+// }, [navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
