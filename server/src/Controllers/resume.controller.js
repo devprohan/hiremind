@@ -32,6 +32,10 @@ const uploadResume = async (req, res) => {
     let result;
     try {
       result = JSON.parse(analysis);
+      console.log("========== GEMINI SKILLS ==========");
+      console.dir(result.skills, { depth: null });
+      console.log("========== GEMINI MISSING SKILLS ==========");
+      console.dir(result.missingSkills, { depth: null });
     } catch (err) {
       throw new Error("Gemini returned invalid JSON");
     }

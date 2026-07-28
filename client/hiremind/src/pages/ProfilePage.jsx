@@ -1,8 +1,10 @@
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileInfoCard from "../components/profile/ProfileInfoCard";
-import ResumeStatsCard from "../components/profile/ResumeStatsCard";
+
 import RecentActivityCard from "../components/profile/RecentActivityCard";
-import AchievementsCard from "../components/profile/AchievementsCard";
+import ResumeStatsCard from "../components/profile/ResumeStatsCard";
+import StatsCard from "../components/profile/StatsCard";
+import SkillsGapCard from "../components/profile/SkillsGapCard";
 
 const profile = {
   name: "Ashwini Hedau",
@@ -41,7 +43,7 @@ const ProfilePage = () => {
 
        
       </div>
-      <AchievementsCard />
+      <SkillsGapCard />
        <RecentActivityCard />
     </div>
   );

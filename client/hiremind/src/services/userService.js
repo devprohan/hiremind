@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:8080/api/user";
+const API = "http://localhost:8080/api/users";
 
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -21,3 +21,21 @@ export const updateProfile = async (data) => {
 
   return res.data;
 };
+
+
+export const changePassword = async (data) => {
+  const response = await axios.put(
+    "http://localhost:8080/api/auth/change-password",
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+
+
