@@ -16,7 +16,7 @@ Candidate Resume Analysis:
 ${resumeAnalysis}
 
 Current Skills:
-${skills.join(", ")}
+${flatSkills.join(", ")}
 
 Missing Skills:
 ${missingSkills.join(", ")}

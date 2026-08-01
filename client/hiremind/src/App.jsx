@@ -13,6 +13,8 @@ import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
 import ProtectedRoute from "./components/protect/protectRoute";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import JobMatchPage from "./pages/JobMatchPage";
+import InterviewPrepPage from "./pages/InterviewPrepPage";
 function App() {
   return (
     <Routes>
@@ -35,8 +37,12 @@ function App() {
         <Route path="upload-resume" element={<UploadResumePage />} />
         <Route path="my-resume" element={<MyResumesPage />} />
         <Route path="resume/:id" element={<ResumeAnalysisPage />} />
+        <Route path="job-match" element={<JobMatchPage />} />
+        <Route path="interview-prep" element={<InterviewPrepPage />} />
         <Route path="profile" element={<ProfilePage />} />
          <Route path="settings" element={<SettingsPage />} />
+
+          
       </Route>
     </Routes>
   );
