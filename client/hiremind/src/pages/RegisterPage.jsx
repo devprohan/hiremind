@@ -111,7 +111,7 @@ export default function RegisterPage() {
       });
 
       setTimeout(() => {
-        navigate("/login");
+        navigate("/dashboard");
       }, 1500);
     } catch (error) {
       setServerError(

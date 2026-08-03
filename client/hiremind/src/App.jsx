@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
+import { useEffect } from "react";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -16,6 +16,22 @@ import SettingsPage from "./pages/SettingsPage";
 import JobMatchPage from "./pages/JobMatchPage";
 import InterviewPrepPage from "./pages/InterviewPrepPage";
 function App() {
+   useEffect(() => {
+    try {
+      const saved =
+        JSON.parse(
+          localStorage.getItem("preferences")
+        ) || {};
+
+      if (saved.darkMode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    } catch {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

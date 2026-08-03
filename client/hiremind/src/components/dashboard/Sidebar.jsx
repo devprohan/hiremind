@@ -21,7 +21,12 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r bg-white p-5">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r bg-white p-5 
+    text-slate-900
+  transition-colors duration-300
+
+  dark:bg-slate-950
+  dark:text-white">
       <div className="mb-10 text-2xl font-black">
         Hire<span className="text-violet-600">Mind</span>
       </div>
@@ -33,7 +38,9 @@ export default function Sidebar() {
             to={p}
             end={p === "/dashboard"}
             className={({ isActive }) =>
-              `block rounded-xl px-4 py-3 text-sm ${isActive ? "bg-violet-100 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`
+              `block rounded-xl px-4 py-3 text-sm 
+             dark:border-slate-800
+  dark:bg-slate-900 ${isActive ? "bg-violet-100 text-violet-700 dark:bg-white" : "text-slate-600 hover:bg-slate-50 "}`
             }
           >
             {n}

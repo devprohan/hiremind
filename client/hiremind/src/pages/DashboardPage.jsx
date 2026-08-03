@@ -1,441 +1,777 @@
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
 import {
   FileText,
   Target,
   BarChart3,
-  PieChart,
-  ArrowUp,
-  Sparkles,
-  Rocket,
+  CheckCircle2,
+  Clock3,
   CalendarDays,
+  Sparkles,
+  BadgeCheck,
+  Lightbulb,
+  LoaderCircle,
+  RefreshCcw,
 } from "lucide-react";
 
-const stats = [
-  {
-    title: "Total Resumes",
-    value: 12,
-    change: "3 this month",
-    icon: FileText,
-    iconStyle: "bg-violet-100 text-violet-600",
-    line: "M0 30 C20 28, 25 20, 45 24 S70 10, 90 18 S120 6, 145 15 S170 5, 200 0",
-  },
-  {
-    title: "Highest ATS Score",
-    value: 92,
-    change: "6 improvement",
-    icon: Target,
-    iconStyle: "bg-emerald-100 text-emerald-600",
-    line: "M0 24 C20 30, 35 18, 55 20 S80 10, 100 16 S125 25, 145 10 S175 2, 200 8",
-  },
-  {
-    title: "Average ATS Score",
-    value: 78,
-    change: "4 this month",
-    icon: BarChart3,
-    iconStyle: "bg-blue-100 text-blue-600",
-    line: "M0 28 C20 18, 30 30, 50 18 S70 10, 90 20 S115 25, 135 8 S160 18, 180 0 S195 5, 200 2",
-  },
-  {
-    title: "Analyses Done",
-    value: 15,
-    change: "5 this month",
-    icon: PieChart,
-    iconStyle: "bg-pink-100 text-pink-600",
-    line: "M0 25 C20 15, 40 22, 55 12 S75 25, 95 15 S120 22, 140 5 S165 20, 180 8 S195 0, 200 2",
-  },
-];
+import {
+  getDashboardStats,
+  getRecentResumes,
+  getSkillsAnalytics,
+} from "../services/dashboardService";
 
-const trend = [
-  { day: "Mon", score: 35 },
-  { day: "Tue", score: 55 },
-  { day: "Wed", score: 45 },
-  { day: "Thu", score: 70 },
-  { day: "Fri", score: 60 },
-  { day: "Sat", score: 90 },
-  { day: "Sun", score: 82 },
-];
+const DashboardPage = () => {
+  // =========================
+  // STATE
+  // =========================
 
-const resumeScores = [
-  { title: "Content", score: 96 },
-  { title: "Format", score: 88 },
-  { title: "Skills", score: 94 },
-  { title: "Relevance", score: 90 },
-];
+  const [stats, setStats] = useState({});
+  const [recentResumes, setRecentResumes] = useState([]);
+  const [topSkills, setTopSkills] = useState([]);
+  const [missingSkills, setMissingSkills] = useState([]);
 
-export default function DashboardPage() {
-  const chartPoints = trend
-    .map((item, index) => {
-      const x = 35 + index * 80;
-      const y = 220 - item.score * 1.8;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-      return `${x},${y}`;
-    })
-    .join(" ");
+  // =========================
+  // FETCH DATA
+  // =========================
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const [statsRes, recentRes, skillsRes] =
+        await Promise.all([
+          getDashboardStats(),
+          getRecentResumes(),
+          getSkillsAnalytics(),
+        ]);
+
+      console.log("STATS:", statsRes);
+      console.log("RECENT:", recentRes);
+      console.log("SKILLS:", skillsRes);
+
+      setStats(statsRes?.stats || {});
+
+      setRecentResumes(
+        recentRes?.recentResumes || []
+      );
+
+      setTopSkills(
+        skillsRes?.topSkills || []
+      );
+
+      setMissingSkills(
+        skillsRes?.missingSkills || []
+      );
+    } catch (err) {
+      console.error(
+        "Dashboard Error:",
+        err.response?.data || err
+      );
+
+      setError(
+        err.response?.data?.message ||
+          "Unable to load dashboard"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // =========================
+  // LOADING
+  // =========================
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[75vh] items-center justify-center">
+        <div className="text-center">
+          <LoaderCircle
+            size={45}
+            className="mx-auto animate-spin text-violet-600"
+          />
+
+          <p className="mt-4 font-medium text-slate-500">
+            Loading dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================
+  // ERROR
+  // =========================
+
+  if (error) {
+    return (
+      <div className="flex min-h-[75vh] items-center justify-center">
+        <div className="max-w-md rounded-3xl border border-red-100 bg-white p-8 text-center shadow-sm">
+          <p className="font-semibold text-red-500">
+            {error}
+          </p>
+
+          <button
+            onClick={fetchDashboard}
+            className="mt-5 flex cursor-pointer items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold text-white"
+          >
+            <RefreshCcw size={17} />
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================
+  // STAT CARDS
+  // =========================
+
+  const statCards = [
+    {
+      title: "Total Resumes",
+      value: stats?.totalResumes ?? 0,
+      subtitle: "Uploaded resumes",
+      icon: FileText,
+      iconBox:
+        "bg-violet-100 text-violet-600",
+    },
+
+    {
+      title: "Highest ATS",
+      value: stats?.highestATS ?? 0,
+      subtitle: "Best ATS score",
+      icon: Target,
+      iconBox:
+        "bg-emerald-100 text-emerald-600",
+    },
+
+    {
+      title: "Average ATS",
+      value: stats?.averageATS ?? 0,
+      subtitle: "Average performance",
+      icon: BarChart3,
+      iconBox:
+        "bg-blue-100 text-blue-600",
+    },
+
+    {
+      title: "Completed",
+      value: stats?.completedAnalysis ?? 0,
+      subtitle: "Completed analyses",
+      icon: CheckCircle2,
+      iconBox:
+        "bg-pink-100 text-pink-600",
+    },
+  ];
+
+  // =========================
+  // LATEST RESUME
+  // =========================
+
+  const latestResume =
+    stats?.latestResume || null;
+
+  const latestScore =
+    latestResume?.atsScore ?? 0;
+
+  // =========================
+  // ATS CIRCLE
+  // =========================
+
+  const radius = 58;
+  const circumference =
+    2 * Math.PI * radius;
+
+  const scoreOffset =
+    circumference -
+    (Math.min(
+      100,
+      Math.max(0, latestScore)
+    ) /
+      100) *
+      circumference;
+
+  // =========================
+  // TREND
+  // =========================
+
+  const trendData = [...recentResumes]
+    .reverse()
+    .map((resume) => ({
+      id: resume._id,
+
+      score: resume.atsScore ?? 0,
+
+      date: resume.createdAt
+        ? new Date(
+            resume.createdAt
+          ).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          })
+        : "",
+    }));
 
   return (
-    <div className="min-h-screen bg-[#fafaff]">
-      {/* HEADER */}
+    <div className="min-h-screen bg-[#fafaff] p-2 md:p-4">
+
+      {/* ===================================
+          HEADER
+      =================================== */}
 
       <section className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
-            Welcome back, Rohan 👋
+          <h1 className="text-3xl font-black text-slate-900 md:text-4xl">
+            Dashboard
           </h1>
 
           <p className="mt-2 text-slate-500">
-            Track your resume performance and improve your chances of getting
-            hired.
+            Track your resume performance and improve
+            your chances of getting hired.
           </p>
         </div>
 
-        <button className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-violet-200 hover:shadow-md">
+        <div className="flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm">
           <CalendarDays size={17} />
 
-          May 20 - May 26, 2024
-        </button>
+          {new Date().toLocaleDateString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }
+          )}
+        </div>
       </section>
 
-      {/* STATS */}
+      {/* ===================================
+          STAT CARDS
+      =================================== */}
 
       <section className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
+        {statCards.map((card, index) => {
+          const Icon = card.icon;
 
           return (
-            <div
-              key={stat.title}
-              className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_rgba(80,70,140,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(124,58,237,0.12)]"
+            <motion.div
+              key={card.title}
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay: index * 0.08,
+              }}
+              whileHover={{
+                y: -5,
+              }}
+              className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
             >
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.iconStyle}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBox}`}
               >
-                <Icon size={22} />
+                <Icon size={23} />
               </div>
 
               <p className="mt-5 text-sm font-semibold text-slate-500">
-                {stat.title}
+                {card.title}
               </p>
 
-              <p className="mt-1 text-4xl font-black text-slate-900">
-                {stat.value}
+              <h2 className="mt-1 text-4xl font-black text-slate-900">
+                {card.value}
+              </h2>
+
+              <p className="mt-2 text-xs text-slate-400">
+                {card.subtitle}
               </p>
-
-              <div className="mt-2 flex items-center gap-1 text-xs font-bold text-emerald-500">
-                <ArrowUp size={13} />
-
-                {stat.change}
-              </div>
-
-              <svg
-                viewBox="0 0 200 35"
-                className="mt-5 h-9 w-full overflow-visible"
-              >
-                <path
-                  d={stat.line}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  className="text-violet-500"
-                />
-              </svg>
-            </div>
+            </motion.div>
           );
         })}
       </section>
 
-      {/* ANALYTICS */}
+      {/* ===================================
+          MAIN ANALYTICS
+      =================================== */}
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_1fr]">
-        {/* ATS CHART */}
 
-        <div className="rounded-2xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-xl font-black text-slate-900">
-                ATS Score Trend
-              </h2>
+        {/* ===================================
+            ATS TREND
+        =================================== */}
 
-              <p className="mt-1 text-sm text-slate-400">
-                Your resume performance over the last 7 days
-              </p>
-            </div>
-
-            <select className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 outline-none">
-              <option>Last 7 days</option>
-              <option>Last 30 days</option>
-            </select>
-          </div>
-
-          <div className="mt-8 overflow-x-auto">
-            <svg
-              viewBox="0 0 550 260"
-              className="h-[270px] min-w-[500px] w-full"
-            >
-              {[40, 85, 130, 175, 220].map((y) => (
-                <line
-                  key={y}
-                  x1="30"
-                  y1={y}
-                  x2="525"
-                  y2={y}
-                  stroke="#e2e8f0"
-                  strokeWidth="1"
-                />
-              ))}
-
-              <defs>
-                <linearGradient
-                  id="chartGradient"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3" />
-
-                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-
-              <polygon
-                points={`${chartPoints} 515,220 35,220`}
-                fill="url(#chartGradient)"
-              />
-
-              <polyline
-                points={chartPoints}
-                fill="none"
-                stroke="#7c3aed"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-              {trend.map((item, index) => {
-                const x = 35 + index * 80;
-                const y = 220 - item.score * 1.8;
-
-                return (
-                  <g key={item.day}>
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r="6"
-                      fill="#7c3aed"
-                      stroke="white"
-                      strokeWidth="3"
-                    />
-
-                    <text
-                      x={x}
-                      y={y - 15}
-                      textAnchor="middle"
-                      className="fill-slate-700 text-[11px] font-bold"
-                    >
-                      {item.score}
-                    </text>
-
-                    <text
-                      x={x}
-                      y="245"
-                      textAnchor="middle"
-                      className="fill-slate-400 text-[11px]"
-                    >
-                      {item.day}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
-
-          <div className="mt-4 flex items-start gap-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-violet-600 shadow-sm">
-              <TrendingIcon />
-            </div>
-
-            <div>
-              <p className="font-bold text-violet-600">Insight</p>
-
-              <p className="mt-1 text-sm text-slate-600">
-                Great job! Your ATS score is improving steadily.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* RESUME ANALYSIS */}
-
-        <div className="rounded-2xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]">
-          <div className="flex items-center justify-between">
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+        >
+          <div>
             <h2 className="text-xl font-black text-slate-900">
-              Recent Resume Analysis
+              ATS Score Trend
             </h2>
 
-            <button className="text-sm font-bold text-violet-600">
-              View all
-            </button>
+            <p className="mt-1 text-sm text-slate-400">
+              Performance of your recent resumes
+            </p>
           </div>
 
-          <div className="mt-7 flex items-center justify-between rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-5">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-red-500 shadow-sm">
-                <FileText size={23} />
-              </div>
+          {trendData.length > 0 ? (
+            <div className="mt-8 flex h-[270px] items-end gap-4 overflow-x-auto px-2">
+              {trendData.map(
+                (item, index) => {
+                  const height = Math.max(
+                    10,
+                    Math.min(
+                      100,
+                      item.score
+                    )
+                  );
 
-              <div>
-                <p className="font-bold text-slate-800">
-                  Resume_SDE.pdf
-                </p>
-
-                <p className="mt-1 text-xs text-slate-400">
-                  Analyzed 2 hours ago
-                </p>
-              </div>
-            </div>
-
-            <div className="text-right">
-              <p className="text-3xl font-black text-emerald-500">
-                92
-              </p>
-
-              <p className="text-xs text-slate-400">
-                ATS Score
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 grid items-center gap-8 md:grid-cols-[150px_1fr]">
-            {/* CIRCLE */}
-
-            <div className="relative mx-auto h-36 w-36">
-              <svg className="h-full w-full -rotate-90">
-                <circle
-                  cx="72"
-                  cy="72"
-                  r="58"
-                  fill="none"
-                  stroke="#ecfdf5"
-                  strokeWidth="10"
-                />
-
-                <circle
-                  cx="72"
-                  cy="72"
-                  r="58"
-                  fill="none"
-                  stroke="#10b981"
-                  strokeWidth="10"
-                  strokeLinecap="round"
-                  strokeDasharray="364"
-                  strokeDashoffset="29"
-                />
-              </svg>
-
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-4xl font-black text-emerald-500">
-                  92
-                </p>
-
-                <p className="text-xs text-slate-400">
-                  out of 100
-                </p>
-              </div>
-            </div>
-
-            {/* BREAKDOWN */}
-
-            <div className="space-y-5">
-              {resumeScores.map((item) => (
-                <div key={item.title}>
-                  <div className="mb-2 flex justify-between text-xs">
-                    <span className="font-semibold text-slate-600">
-                      {item.title}
-                    </span>
-
-                    <span className="font-bold text-slate-600">
-                      {item.score}/100
-                    </span>
-                  </div>
-
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                  return (
                     <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-700"
-                      style={{
-                        width: `${item.score}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                      key={
+                        item.id || index
+                      }
+                      className="flex min-w-[70px] flex-1 flex-col items-center justify-end"
+                    >
+                      <p className="mb-2 text-sm font-bold text-violet-600">
+                        {item.score}
+                      </p>
 
-          <div className="mt-8 flex items-start gap-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-5">
+                      <motion.div
+                        initial={{
+                          height: 0,
+                        }}
+                        animate={{
+                          height: `${height * 1.8}px`,
+                        }}
+                        transition={{
+                          duration: 0.8,
+                          delay:
+                            index * 0.08,
+                        }}
+                        className="w-10 rounded-t-xl bg-gradient-to-t from-violet-600 to-purple-400"
+                      />
+
+                      <p className="mt-3 text-xs font-medium text-slate-400">
+                        {item.date}
+                      </p>
+                    </div>
+                  );
+                }
+              )}
+            </div>
+          ) : (
+            <div className="flex h-[270px] items-center justify-center">
+              <div className="text-center">
+                <BarChart3
+                  size={38}
+                  className="mx-auto text-slate-300"
+                />
+
+                <p className="mt-3 text-sm text-slate-400">
+                  No ATS history available.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="mt-6 flex items-start gap-3 rounded-2xl bg-violet-50 p-5">
             <Sparkles
-              size={21}
-              className="mt-1 shrink-0 text-violet-600"
+              size={20}
+              className="mt-0.5 shrink-0 text-violet-600"
             />
 
             <div>
-              <p className="font-bold text-violet-600">
-                Excellent!
+              <p className="font-bold text-violet-700">
+                Performance Insight
               </p>
 
-              <p className="mt-1 text-sm text-slate-600">
-                Your resume is well-optimized and ATS-friendly.
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Analyze multiple versions of your
+                resume to track how your ATS score
+                improves over time.
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* ===================================
+            LATEST ANALYSIS
+        =================================== */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            delay: 0.1,
+          }}
+          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+        >
+          <h2 className="text-xl font-black text-slate-900">
+            Latest Resume Analysis
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-400">
+            Your most recently analyzed resume
+          </p>
+
+          {latestResume ? (
+            <>
+              {/* FILE */}
+
+              <div className="mt-6 flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-600 shadow-sm">
+                    <FileText size={21} />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="truncate font-bold text-slate-800">
+                      {latestResume.originalName ||
+                        "Resume"}
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      {latestResume.createdAt
+                        ? new Date(
+                            latestResume.createdAt
+                          ).toLocaleDateString()
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* SCORE CIRCLE */}
+
+              <div className="mt-8 flex justify-center">
+                <div className="relative h-44 w-44">
+                  <svg
+                    viewBox="0 0 144 144"
+                    className="h-full w-full -rotate-90"
+                  >
+                    <circle
+                      cx="72"
+                      cy="72"
+                      r={radius}
+                      fill="none"
+                      stroke="#ede9fe"
+                      strokeWidth="11"
+                    />
+
+                    <motion.circle
+                      cx="72"
+                      cy="72"
+                      r={radius}
+                      fill="none"
+                      stroke="#7c3aed"
+                      strokeWidth="11"
+                      strokeLinecap="round"
+                      strokeDasharray={
+                        circumference
+                      }
+                      initial={{
+                        strokeDashoffset:
+                          circumference,
+                      }}
+                      animate={{
+                        strokeDashoffset:
+                          scoreOffset,
+                      }}
+                      transition={{
+                        duration: 1.2,
+                      }}
+                    />
+                  </svg>
+
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-4xl font-black text-violet-600">
+                      {latestScore}
+                    </span>
+
+                    <span className="mt-1 text-xs text-slate-400">
+                      ATS Score
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* STATUS */}
+
+              <div className="mt-5 flex justify-center">
+                {latestResume.status ===
+                "Completed" ? (
+                  <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-600">
+                    <CheckCircle2
+                      size={17}
+                    />
+                    Completed
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
+                    <Clock3 size={17} />
+                    {latestResume.status ||
+                      "Processing"}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex h-[300px] items-center justify-center">
+              <div className="text-center">
+                <FileText
+                  size={42}
+                  className="mx-auto text-slate-300"
+                />
+
+                <p className="mt-3 text-sm text-slate-400">
+                  No resume analyzed yet.
+                </p>
+              </div>
+            </div>
+          )}
+        </motion.div>
       </section>
 
-      {/* CTA */}
+      {/* ===================================
+          SKILLS
+      =================================== */}
 
-      <section className="relative mt-6 overflow-hidden rounded-2xl bg-gradient-to-r from-violet-100 via-purple-50 to-pink-100 p-7">
-        <div className="absolute -left-10 -top-10 h-36 w-36 rounded-full bg-violet-300/30 blur-3xl" />
+      <section className="mt-6 grid gap-6 lg:grid-cols-2">
 
-        <div className="relative flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <div className="flex items-center gap-5">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-violet-600 shadow-lg shadow-violet-200">
-              <Rocket size={30} />
+        {/* FOUND SKILLS */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+              <BadgeCheck size={22} />
             </div>
 
             <div>
-              <h3 className="text-lg font-black text-slate-900">
-                Improve your score even more!
-              </h3>
+              <h2 className="text-xl font-black text-slate-900">
+                Skills Found
+              </h2>
 
-              <p className="mt-1 max-w-lg text-sm leading-6 text-slate-600">
-                Get personalized suggestions to make your resume stand out
-                and land more interviews.
+              <p className="text-sm text-slate-400">
+                Detected across your resumes
               </p>
             </div>
           </div>
 
-          <button className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 px-7 py-4 text-sm font-bold text-white shadow-lg shadow-violet-200 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-            Analyze Again
+          {topSkills.length > 0 ? (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {topSkills.map(
+                (skill, index) => (
+                  <span
+                    key={`${skill}-${index}`}
+                    className="rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700"
+                  >
+                    {skill}
+                  </span>
+                )
+              )}
+            </div>
+          ) : (
+            <p className="mt-8 text-sm text-slate-400">
+              No skills detected yet.
+            </p>
+          )}
+        </motion.div>
 
-            <Sparkles size={17} />
-          </button>
-        </div>
+        {/* MISSING SKILLS */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            delay: 0.1,
+          }}
+          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+              <Lightbulb size={22} />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-black text-slate-900">
+                Recommended Skills
+              </h2>
+
+              <p className="text-sm text-slate-400">
+                Skills you can consider adding
+              </p>
+            </div>
+          </div>
+
+          {missingSkills.length > 0 ? (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {missingSkills.map(
+                (skill, index) => (
+                  <span
+                    key={`${skill}-${index}`}
+                    className="rounded-full border border-orange-100 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700"
+                  >
+                    {skill}
+                  </span>
+                )
+              )}
+            </div>
+          ) : (
+            <p className="mt-8 text-sm text-slate-400">
+              No recommended skills available.
+            </p>
+          )}
+        </motion.div>
       </section>
+
+      {/* ===================================
+          RECENT RESUMES
+      =================================== */}
+
+      <motion.section
+        initial={{
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        className="mt-6 rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+      >
+        <div>
+          <h2 className="text-xl font-black text-slate-900">
+            Recent Resumes
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-400">
+            Your latest resume analyses
+          </p>
+        </div>
+
+        {recentResumes.length > 0 ? (
+          <div className="mt-5 divide-y divide-slate-100">
+            {recentResumes.map(
+              (resume) => (
+                <div
+                  key={resume._id}
+                  className="flex flex-col justify-between gap-4 py-5 sm:flex-row sm:items-center"
+                >
+                  <div className="flex min-w-0 items-center gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                      <FileText
+                        size={20}
+                      />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="truncate font-bold text-slate-800">
+                        {resume.originalName ||
+                          "Resume"}
+                      </p>
+
+                      <p className="mt-1 text-xs text-slate-400">
+                        {resume.createdAt
+                          ? new Date(
+                              resume.createdAt
+                            ).toLocaleDateString()
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-7">
+                    <div>
+                      <p className="text-xs text-slate-400">
+                        Status
+                      </p>
+
+                      <p
+                        className={`mt-1 text-sm font-bold ${
+                          resume.status ===
+                          "Completed"
+                            ? "text-emerald-600"
+                            : "text-orange-500"
+                        }`}
+                      >
+                        {resume.status ||
+                          "Processing"}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-2xl font-black text-violet-600">
+                        {resume.atsScore ??
+                          0}
+                      </p>
+
+                      <p className="text-xs text-slate-400">
+                        ATS Score
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        ) : (
+          <div className="py-12 text-center">
+            <FileText
+              size={40}
+              className="mx-auto text-slate-300"
+            />
+
+            <p className="mt-3 text-sm text-slate-400">
+              No resumes uploaded yet.
+            </p>
+          </div>
+        )}
+      </motion.section>
     </div>
   );
-}
+};
 
-function TrendingIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M3 17l6-6 4 4 8-8" />
-
-      <path d="M15 7h6v6" />
-    </svg>
-  );
-}
+export default DashboardPage;

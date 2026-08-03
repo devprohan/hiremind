@@ -1,8 +1,257 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+/* =====================================================
+   HIREMIND GLOBAL DARK MODE
+   Same theme as PreferenceSettings
+===================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Smooth transition */
+html,
+body,
+#root {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* =========================
+   MAIN WEBSITE BACKGROUND
+========================= */
+
+html.dark body,
+html.dark #root {
+  background-color: #020617 !important; /* slate-950 */
+  color: #f8fafc;
+}
+
+/* Common page backgrounds */
+html.dark .bg-\[\#fafaff\],
+html.dark .bg-slate-50,
+html.dark .bg-gray-50 {
+  background-color: #020617 !important; /* slate-950 */
+}
+
+
+/* =========================
+   WHITE CARDS / SIDEBAR
+========================= */
+
+html.dark .bg-white {
+  background-color: #0f172a !important; /* slate-900 */
+}
+
+/* Transparent white cards */
+html.dark .bg-white\/80,
+html.dark .bg-white\/90 {
+  background-color: rgb(15 23 42 / 0.9) !important;
+}
+
+
+/* =========================
+   INNER CARD BACKGROUNDS
+========================= */
+
+html.dark .bg-slate-100 {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+html.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+
+/* =========================
+   TEXT
+========================= */
+
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+html.dark .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================
+   BORDERS
+========================= */
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-gray-100,
+html.dark .border-gray-200 {
+  border-color: #1e293b !important; /* slate-800 */
+}
+
+
+/* =========================
+   INPUT / TEXTAREA / SELECT
+========================= */
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+
+/* =========================
+   VIOLET LIGHT BACKGROUNDS
+========================= */
+
+html.dark .bg-violet-50 {
+  background-color: rgb(124 58 237 / 0.08) !important;
+}
+
+html.dark .bg-violet-100 {
+  background-color: rgb(124 58 237 / 0.18) !important;
+}
+
+html.dark .text-violet-700,
+html.dark .text-violet-600 {
+  color: #a78bfa !important;
+}
+
+
+/* =========================
+   PINK LIGHT BACKGROUNDS
+========================= */
+
+html.dark .bg-pink-50 {
+  background-color: rgb(236 72 153 / 0.08) !important;
+}
+
+html.dark .bg-pink-100 {
+  background-color: rgb(236 72 153 / 0.15) !important;
+}
+
+
+/* =========================
+   GREEN / SUCCESS
+========================= */
+
+html.dark .bg-emerald-50 {
+  background-color: rgb(16 185 129 / 0.08) !important;
+}
+
+html.dark .bg-emerald-100 {
+  background-color: rgb(16 185 129 / 0.15) !important;
+}
+
+
+/* =========================
+   ORANGE
+========================= */
+
+html.dark .bg-orange-50 {
+  background-color: rgb(249 115 22 / 0.08) !important;
+}
+
+html.dark .bg-orange-100 {
+  background-color: rgb(249 115 22 / 0.15) !important;
+}
+
+
+/* =========================
+   BLUE
+========================= */
+
+html.dark .bg-blue-50 {
+  background-color: rgb(59 130 246 / 0.08) !important;
+}
+
+html.dark .bg-blue-100 {
+  background-color: rgb(59 130 246 / 0.15) !important;
+}
+
+
+/* =========================
+   SHADOWS
+========================= */
+
+html.dark .shadow-sm,
+html.dark .shadow,
+html.dark .shadow-md,
+html.dark .shadow-lg,
+html.dark .shadow-xl,
+html.dark .shadow-2xl {
+  --tw-shadow-color: rgb(0 0 0 / 0.3);
+}
+
+
+/* =========================
+   HOVER STATES
+========================= */
+
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100:hover {
+  background-color: #1e293b !important;
+}
+
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+html.dark ::-webkit-scrollbar {
+  width: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+html.dark .from-violet-50 {
+  --tw-gradient-from: #020617 !important;
+  --tw-gradient-to: rgb(2 6 23 / 0) !important;
+  --tw-gradient-stops:
+    var(--tw-gradient-from),
+    var(--tw-gradient-to) !important;
+}
+
+html.dark .via-white {
+  --tw-gradient-via: #0f172a !important;
+  --tw-gradient-stops:
+    var(--tw-gradient-from),
+    var(--tw-gradient-via),
+    var(--tw-gradient-to) !important;
+}
+
+html.dark .to-pink-50 {
+  --tw-gradient-to: #020617 !important;
+}
 
 /* Pointer cursor for all clickable elements */
 button,
-a,div,
+a,
 [role="button"],
 input[type="submit"],
 input[type="button"],
