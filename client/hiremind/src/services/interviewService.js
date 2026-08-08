@@ -1,10 +1,10 @@
 import axios from "axios";
-
+import { getToken } from "./authService";
 const API_URL = "http://localhost:8080/api/interview";
 
 // Generate interview questions
 export const generateInterviewQuestions = async (jobRole) => {
-  const token = localStorage.getItem("token");
+ 
 
   const response = await axios.post(
     `${API_URL}/generate`,
@@ -13,7 +13,7 @@ export const generateInterviewQuestions = async (jobRole) => {
     },
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
       withCredentials: true,
     }

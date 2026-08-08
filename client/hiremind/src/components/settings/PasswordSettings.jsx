@@ -51,8 +51,9 @@ const PasswordSettings = () => {
 
     try {
       setSaving(true);
-
-      const token = localStorage.getItem("token");
+const token =
+  localStorage.getItem("token") ||
+  sessionStorage.getItem("token");
 
       const res = await axios.put(
         "http://localhost:5000/api/auth/change-password",

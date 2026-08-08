@@ -1,20 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authService";
+import { loginUser, googleLogin } from "../services/authService";
 
 export default function LoginPage() {
   const navigate = useNavigate();
- 
 
-// useEffect(() => {
-//   if (localStorage.getItem("token")) {
-//     navigate("/dashboard", { replace: true });
-//   }
-// }, [navigate]);
+  useEffect(() => {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -43,9 +45,7 @@ export default function LoginPage() {
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
     }
 
@@ -75,24 +75,17 @@ export default function LoginPage() {
       const userData = {
         email: formData.email.trim(),
         password: formData.password,
+        rememberMe: formData.rememberMe,
       };
 
-      const data = await loginUser(userData);
-
-      localStorage.setItem("token", data.token);
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(data.user)
-      );
+      await loginUser(userData);
 
       navigate("/dashboard");
     } catch (error) {
       console.log("Login Error:", error);
 
       setServerError(
-        error.response?.data?.message ||
-          "Login failed. Please try again."
+        error.response?.data?.message || "Login failed. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -112,7 +105,6 @@ export default function LoginPage() {
 
   return (
     <div className="relative grid min-h-screen place-items-center overflow-hidden bg-[#faf9ff] px-6 py-12">
-
       {/* Aurora Background */}
 
       <div className="pointer-events-none absolute inset-0">
@@ -126,22 +118,16 @@ export default function LoginPage() {
       {/* Login Card */}
 
       <div className="relative z-10 w-full max-w-md rounded-[32px] border border-white/70 bg-white/80 p-8 shadow-[0_25px_80px_rgba(124,58,237,0.15)] backdrop-blur-xl md:p-10">
-
         {/* Logo */}
 
-        <Link
-          to="/"
-          className="mb-8 flex items-center justify-center gap-2"
-        >
+        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
           <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-pink-500 text-xl font-black text-white shadow-lg shadow-violet-200">
             H
           </div>
 
           <h2 className="text-2xl font-black text-slate-900">
             Hire
-            <span className="text-violet-600">
-              Mind
-            </span>
+            <span className="text-violet-600">Mind</span>
           </h2>
         </Link>
 
@@ -167,11 +153,7 @@ export default function LoginPage() {
 
         {/* Form */}
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-5"
-          noValidate
-        >
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
           {/* Email */}
 
           <div>
@@ -189,9 +171,7 @@ export default function LoginPage() {
             />
 
             {errors.email && (
-              <p className="mt-2 text-sm text-red-500">
-                {errors.email}
-              </p>
+              <p className="mt-2 text-sm text-red-500">{errors.email}</p>
             )}
           </div>
 
@@ -203,12 +183,12 @@ export default function LoginPage() {
                 Password
               </label>
 
-              <button
-                type="button"
+              <Link
+                to="/forgot-password"
                 className="text-xs font-semibold text-violet-600 transition hover:text-pink-500"
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             <div className="relative">
@@ -218,16 +198,12 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className={`${inputClass(
-                  "password"
-                )} pr-16`}
+                className={`${inputClass("password")} pr-16`}
               />
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
+                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-500 transition hover:text-violet-600"
               >
                 {showPassword ? "Hide" : "Show"}
@@ -235,9 +211,7 @@ export default function LoginPage() {
             </div>
 
             {errors.password && (
-              <p className="mt-2 text-sm text-red-500">
-                {errors.password}
-              </p>
+              <p className="mt-2 text-sm text-red-500">{errors.password}</p>
             )}
           </div>
 
@@ -246,14 +220,18 @@ export default function LoginPage() {
           <div className="flex items-center gap-2">
             <input
               id="remember"
+              checked={formData.rememberMe}
               type="checkbox"
               className="h-4 w-4 accent-violet-600"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  rememberMe: e.target.checked,
+                }))
+              }
             />
 
-            <label
-              htmlFor="remember"
-              className="text-sm text-slate-500"
-            >
+            <label htmlFor="remember" className="text-sm text-slate-500">
               Remember me
             </label>
           </div>
@@ -282,9 +260,7 @@ export default function LoginPage() {
         <div className="my-7 flex items-center gap-4">
           <div className="h-px flex-1 bg-slate-200" />
 
-          <span className="text-xs text-slate-400">
-            OR
-          </span>
+          <span className="text-xs text-slate-400">OR</span>
 
           <div className="h-px flex-1 bg-slate-200" />
         </div>
@@ -293,6 +269,7 @@ export default function LoginPage() {
 
         <button
           type="button"
+          onClick={googleLogin}
           className="w-full rounded-xl border border-slate-200 bg-white px-5 py-3 font-medium text-slate-700 transition duration-300 hover:border-violet-200 hover:bg-violet-50"
         >
           Continue with Google
@@ -302,7 +279,6 @@ export default function LoginPage() {
 
         <p className="mt-7 text-center text-sm text-slate-500">
           Don't have an account?{" "}
-
           <Link
             to="/register"
             className="font-semibold text-violet-600 transition hover:text-pink-500"

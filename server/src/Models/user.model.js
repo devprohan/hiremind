@@ -16,10 +16,26 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: false,
       minlength: 8,
+    },
+
+    resetPasswordOTP: {
+      type: String,
+      default: null,
+    },
+
+    resetPasswordOTPExpiry: {
+      type: Date,
+      default: null,
     },
     profileImage: {
       type: String,
@@ -49,6 +65,7 @@ const userSchema = new mongoose.Schema(
     skills: [
       {
         type: String,
+        default: [],
       },
     ],
     bio: {

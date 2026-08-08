@@ -1,9 +1,9 @@
 import axios from "axios";
-
+import { getToken } from "./authService";
 const API = "http://localhost:8080/api/users";
 
 const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem("token")}`,
+  Authorization: `Bearer ${getToken()}`,
 });
 
 export const getCurrentUser = async () => {
@@ -24,12 +24,13 @@ export const updateProfile = async (data) => {
 
 
 export const changePassword = async (data) => {
+ 
   const response = await axios.put(
     "http://localhost:8080/api/auth/change-password",
     data,
     {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     }
   );

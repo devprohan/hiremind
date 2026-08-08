@@ -1,5 +1,7 @@
 const Resume = require("../Models/resume.model");
 
+
+
 const getDashboardStats = async (req, res) => {
   try {
     // Get all resumes of logged-in user
@@ -7,35 +9,35 @@ const getDashboardStats = async (req, res) => {
       user: req.user._id,
     }).sort({ createdAt: -1 });
 
-    // Total resumes
     const totalResumes = resumes.length;
 
-    // Highest ATS Score
+   
     const highestATS =
       totalResumes > 0
-        ? Math.max(...resumes.map((resume) => resume.atsScore))
+        ? Math.max(...resumes.map((resume) => resume.atsScore || 0))
         : 0;
 
-    // Average ATS Score
     const averageATS =
       totalResumes > 0
         ? Math.round(
-            resumes.reduce((sum, resume) => sum + resume.atsScore, 0) /
-              totalResumes,
+            resumes.reduce(
+              (sum, resume) => sum + (resume.atsScore || 0),
+              0
+            ) / totalResumes
           )
         : 0;
 
-    // Completed Analysis
+    
     const completedAnalysis = resumes.filter(
-      (resume) => resume.status === "Completed",
+      (resume) => resume.status === "Completed"
     ).length;
 
-    // Processing Analysis
+    
     const processing = resumes.filter(
-      (resume) => resume.status === "Processing",
+      (resume) => resume.status === "Processing"
     ).length;
 
-    // Latest Resume
+  
     const latestResume =
       totalResumes > 0
         ? {
@@ -49,6 +51,7 @@ const getDashboardStats = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+
       stats: {
         totalResumes,
         highestATS,
@@ -66,6 +69,9 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+
+
+
 const getRecentResumes = async (req, res) => {
   try {
     const recentResumes = await Resume.find({
@@ -73,7 +79,9 @@ const getRecentResumes = async (req, res) => {
     })
       .sort({ createdAt: -1 })
       .limit(5)
-      .select("_id originalName atsScore status createdAt resumeUrl");
+      .select(
+        "_id originalName atsScore status createdAt resumeUrl"
+      );
 
     return res.status(200).json({
       success: true,
@@ -87,51 +95,110 @@ const getRecentResumes = async (req, res) => {
   }
 };
 
+
+
+
 const getSkillsAnalytics = async (req, res) => {
   try {
     const resumes = await Resume.find({
       user: req.user._id,
     });
 
-    console.log("===== RAW SKILLS =====");
-  console.dir(resumes[0].skills, { depth: null });
-
-  console.log("===== TYPE =====");
-  console.log(resumes[0].skills instanceof Map);
-  console.log(resumes[0].skills);
-
     const topSkills = [];
     const missingSkills = [];
 
+  
+
+    if (resumes.length === 0) {
+      return res.status(200).json({
+        success: true,
+        topSkills: [],
+        missingSkills: [],
+      });
+    }
+
+   
+
     resumes.forEach((resume) => {
-      // Handle skills Map
+
+     
+
       if (resume.skills) {
-        for (const values of resume.skills.values()) {
-          topSkills.push(...values);
+
+        // If skills is a Map
+        if (resume.skills instanceof Map) {
+          for (const values of resume.skills.values()) {
+            if (Array.isArray(values)) {
+              topSkills.push(...values);
+            }
+          }
+        }
+
+       
+        else if (Array.isArray(resume.skills)) {
+          topSkills.push(...resume.skills);
         }
       }
 
-      // Handle missingSkills Map
+
+    
+
       if (resume.missingSkills) {
-        for (const values of resume.missingSkills.values()) {
-          missingSkills.push(...values);
+
+        // If missingSkills is a Map
+        if (resume.missingSkills instanceof Map) {
+          for (const values of resume.missingSkills.values()) {
+            if (Array.isArray(values)) {
+              missingSkills.push(...values);
+            }
+          }
+        }
+
+        // If missingSkills is an Array
+        else if (Array.isArray(resume.missingSkills)) {
+          missingSkills.push(...resume.missingSkills);
         }
       }
     });
 
-    return res.json({
+
+    
+
+    const uniqueTopSkills = [
+      ...new Set(topSkills),
+    ];
+
+    const uniqueMissingSkills = [
+      ...new Set(missingSkills),
+    ];
+
+
+  
+
+    return res.status(200).json({
       success: true,
-      topSkills: [...new Set(topSkills)],
-      missingSkills: [...new Set(missingSkills)],
+
+      topSkills: uniqueTopSkills,
+
+      missingSkills: uniqueMissingSkills,
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
+
+  } catch (error) {
+
+    console.error(
+      "Skills Analytics Error:",
+      error
+    );
+
+    return res.status(500).json({
       success: false,
-      message: err.message,
+      message: error.message,
     });
   }
 };
+
+
+ 
 
 module.exports = {
   getDashboardStats,

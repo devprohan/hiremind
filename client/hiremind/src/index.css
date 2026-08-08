@@ -7,7 +7,18 @@
    Same theme as PreferenceSettings
 ===================================================== */
 
-@custom-variant dark (&:where(.dark, .dark *));
+html.dark .bg-green-50,
+html.dark .bg-emerald-50 {
+  background-color: rgb(16 185 129 / 0.08) !important;
+}
+
+html.dark .bg-red-50 {
+  background-color: rgb(239 68 68 / 0.08) !important;
+}
+
+html.dark .bg-yellow-50 {
+  background-color: rgb(234 179 8 / 0.08) !important;
+}
 
 /* Smooth transition */
 html,
@@ -257,4 +268,36 @@ input[type="submit"],
 input[type="button"],
 input[type="reset"] {
   cursor: pointer;
+}
+
+/* =========================
+   GRAY TEXT - DARK MODE
+========================= */
+
+html.dark .text-gray-900,
+html.dark .text-gray-800,
+html.dark .text-gray-700 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-gray-600,
+html.dark .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================
+   MUTED TEXT
+========================= */
+
+html.dark .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-gray-300 {
+  color: #cbd5e1 !important;
 }

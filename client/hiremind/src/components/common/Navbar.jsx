@@ -10,7 +10,7 @@ export default function Navbar() {
           <a href="#about">About</a>
         </div>
         <div className="flex gap-3">
-          <a href="/register" className="rounded-xl px-4 py-2">
+          <a href="/login" className="rounded-xl px-4 py-2">
             Login
           </a>
           <a

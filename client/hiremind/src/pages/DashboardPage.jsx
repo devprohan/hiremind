@@ -28,6 +28,8 @@ const DashboardPage = () => {
 
   const [stats, setStats] = useState({});
   const [recentResumes, setRecentResumes] = useState([]);
+
+  // Dynamic skills
   const [topSkills, setTopSkills] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
 
@@ -35,7 +37,7 @@ const DashboardPage = () => {
   const [error, setError] = useState("");
 
   // =========================
-  // FETCH DATA
+  // FETCH DASHBOARD
   // =========================
 
   useEffect(() => {
@@ -58,19 +60,27 @@ const DashboardPage = () => {
       console.log("RECENT:", recentRes);
       console.log("SKILLS:", skillsRes);
 
+      // Stats
       setStats(statsRes?.stats || {});
 
+      // Recent resumes
       setRecentResumes(
         recentRes?.recentResumes || []
       );
 
+      // Skills
       setTopSkills(
-        skillsRes?.topSkills || []
+        Array.isArray(skillsRes?.topSkills)
+          ? skillsRes.topSkills
+          : []
       );
 
       setMissingSkills(
-        skillsRes?.missingSkills || []
+        Array.isArray(skillsRes?.missingSkills)
+          ? skillsRes.missingSkills
+          : []
       );
+
     } catch (err) {
       console.error(
         "Dashboard Error:",
@@ -81,6 +91,13 @@ const DashboardPage = () => {
         err.response?.data?.message ||
           "Unable to load dashboard"
       );
+
+      // Safe empty state
+      setStats({});
+      setRecentResumes([]);
+      setTopSkills([]);
+      setMissingSkills([]);
+
     } finally {
       setLoading(false);
     }
@@ -141,8 +158,7 @@ const DashboardPage = () => {
       value: stats?.totalResumes ?? 0,
       subtitle: "Uploaded resumes",
       icon: FileText,
-      iconBox:
-        "bg-violet-100 text-violet-600",
+      iconBox: "bg-violet-100 text-violet-600",
     },
 
     {
@@ -150,8 +166,7 @@ const DashboardPage = () => {
       value: stats?.highestATS ?? 0,
       subtitle: "Best ATS score",
       icon: Target,
-      iconBox:
-        "bg-emerald-100 text-emerald-600",
+      iconBox: "bg-emerald-100 text-emerald-600",
     },
 
     {
@@ -159,8 +174,7 @@ const DashboardPage = () => {
       value: stats?.averageATS ?? 0,
       subtitle: "Average performance",
       icon: BarChart3,
-      iconBox:
-        "bg-blue-100 text-blue-600",
+      iconBox: "bg-blue-100 text-blue-600",
     },
 
     {
@@ -168,8 +182,7 @@ const DashboardPage = () => {
       value: stats?.completedAnalysis ?? 0,
       subtitle: "Completed analyses",
       icon: CheckCircle2,
-      iconBox:
-        "bg-pink-100 text-pink-600",
+      iconBox: "bg-pink-100 text-pink-600",
     },
   ];
 
@@ -188,6 +201,7 @@ const DashboardPage = () => {
   // =========================
 
   const radius = 58;
+
   const circumference =
     2 * Math.PI * radius;
 
@@ -208,7 +222,6 @@ const DashboardPage = () => {
     .reverse()
     .map((resume) => ({
       id: resume._id,
-
       score: resume.atsScore ?? 0,
 
       date: resume.createdAt
@@ -309,9 +322,7 @@ const DashboardPage = () => {
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_1fr]">
 
-        {/* ===================================
-            ATS TREND
-        =================================== */}
+        {/* ATS TREND */}
 
         <motion.div
           initial={{
@@ -415,9 +426,8 @@ const DashboardPage = () => {
           </div>
         </motion.div>
 
-        {/* ===================================
-            LATEST ANALYSIS
-        =================================== */}
+
+        {/* LATEST ANALYSIS */}
 
         <motion.div
           initial={{
@@ -443,8 +453,6 @@ const DashboardPage = () => {
 
           {latestResume ? (
             <>
-              {/* FILE */}
-
               <div className="mt-6 flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-5">
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-600 shadow-sm">
@@ -467,8 +475,6 @@ const DashboardPage = () => {
                   </div>
                 </div>
               </div>
-
-              {/* SCORE CIRCLE */}
 
               <div className="mt-8 flex justify-center">
                 <div className="relative h-44 w-44">
@@ -522,8 +528,6 @@ const DashboardPage = () => {
                 </div>
               </div>
 
-              {/* STATUS */}
-
               <div className="mt-5 flex justify-center">
                 {latestResume.status ===
                 "Completed" ? (
@@ -559,13 +563,14 @@ const DashboardPage = () => {
         </motion.div>
       </section>
 
+
       {/* ===================================
           SKILLS
       =================================== */}
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
 
-        {/* FOUND SKILLS */}
+        {/* SKILLS FOUND */}
 
         <motion.div
           initial={{
@@ -608,13 +613,26 @@ const DashboardPage = () => {
               )}
             </div>
           ) : (
-            <p className="mt-8 text-sm text-slate-400">
-              No skills detected yet.
-            </p>
+            <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+              <BadgeCheck
+                size={32}
+                className="mx-auto text-slate-300"
+              />
+
+              <p className="mt-3 text-sm font-medium text-slate-500">
+                No skills detected yet.
+              </p>
+
+              <p className="mt-1 text-xs text-slate-400">
+                Upload and analyze a resume to see
+                your detected skills.
+              </p>
+            </div>
           )}
         </motion.div>
 
-        {/* MISSING SKILLS */}
+
+        {/* RECOMMENDED SKILLS */}
 
         <motion.div
           initial={{
@@ -660,12 +678,25 @@ const DashboardPage = () => {
               )}
             </div>
           ) : (
-            <p className="mt-8 text-sm text-slate-400">
-              No recommended skills available.
-            </p>
+            <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+              <Lightbulb
+                size={32}
+                className="mx-auto text-slate-300"
+              />
+
+              <p className="mt-3 text-sm font-medium text-slate-500">
+                No recommendations yet.
+              </p>
+
+              <p className="mt-1 text-xs text-slate-400">
+                Upload and analyze a resume to get
+                personalized skill recommendations.
+              </p>
+            </div>
           )}
         </motion.div>
       </section>
+
 
       {/* ===================================
           RECENT RESUMES
@@ -702,9 +733,7 @@ const DashboardPage = () => {
                 >
                   <div className="flex min-w-0 items-center gap-4">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
-                      <FileText
-                        size={20}
-                      />
+                      <FileText size={20} />
                     </div>
 
                     <div className="min-w-0">

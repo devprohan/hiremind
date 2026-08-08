@@ -1,9 +1,11 @@
 import axios from "axios";
-
+import { getToken } from "./authService";
 const API = "http://localhost:8080/api/resume";
 
+
+
 const authHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem("token")}`,
+  Authorization: `Bearer ${getToken()}`,
 });
 
 export const uploadResume = async (formData) => {

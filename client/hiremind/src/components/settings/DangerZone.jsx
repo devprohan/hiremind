@@ -10,7 +10,9 @@ const DangerZone = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem("token");
+     const token =
+  localStorage.getItem("token") ||
+  sessionStorage.getItem("token");
 
       await logoutUser(
         "http://localhost:5000/api/auth/logout",
@@ -23,6 +25,7 @@ const DangerZone = () => {
       );
 
       localStorage.removeItem("token");
+      sessionStorage.getItem("token");
       localStorage.removeItem("user");
 
       alert("Logged out successfully");

@@ -1,13 +1,14 @@
 import axios from "axios";
+import { getToken } from "./authService";
 
 const API_URL = "http://localhost:8080/api/dashboard";
 
 const getAuthConfig = () => {
-  const token = localStorage.getItem("token");
+  
 
   return {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   };
 };
