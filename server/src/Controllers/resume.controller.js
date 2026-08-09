@@ -71,7 +71,6 @@ const uploadResume = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
-    const user = await User.findById(req.user._id);
 
 if (user?.preferences?.emailNotifications === true) {
   try {
