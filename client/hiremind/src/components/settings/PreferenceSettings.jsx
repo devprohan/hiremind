@@ -7,7 +7,13 @@ import {
   Moon,
   Sun,
   Check,
+  Loader2,
 } from "lucide-react";
+
+import {
+  getPreferences,
+  updatePreferences,
+} from "../../services/userService";
 
 const DEFAULT_PREFERENCES = {
   emailNotifications: true,
@@ -17,37 +23,37 @@ const DEFAULT_PREFERENCES = {
 };
 
 const PreferenceSettings = () => {
-  const [preferences, setPreferences] = useState(() => {
-  try {
-    const saved = localStorage.getItem("preferences");
+  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
 
-    if (saved) {
-      return {
-        emailNotifications: true,
-        aiSuggestions: true,
-        weeklyTips: false,
-        darkMode: false,
-        ...JSON.parse(saved),
-      };
-    }
-  } catch (error) {
-    console.error("Failed to load preferences:", error);
-  }
-
-  return {
-    emailNotifications: true,
-    aiSuggestions: true,
-    weeklyTips: false,
-    darkMode: false,
-  };
-});
-
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // ==========================================
-  // APPLY DARK MODE
-  // ==========================================
+  // Load preferences from database
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        setLoading(true);
 
+        const res = await getPreferences();
+
+        if (res.preferences) {
+          setPreferences({
+            ...DEFAULT_PREFERENCES,
+            ...res.preferences,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load preferences:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPreferences();
+  }, []);
+
+  // Apply dark mode
   useEffect(() => {
     if (preferences.darkMode) {
       document.documentElement.classList.add("dark");
@@ -56,83 +62,66 @@ const PreferenceSettings = () => {
     }
   }, [preferences.darkMode]);
 
-  // ==========================================
-  // TOGGLE PREFERENCE
-  // ==========================================
-
+  // Toggle
   const toggle = (key) => {
-  setPreferences((prev) => {
-    const updatedPreferences = {
+    setPreferences((prev) => ({
       ...prev,
       [key]: !prev[key],
-    };
-
-    // Save immediately
-    localStorage.setItem(
-      "preferences",
-      JSON.stringify(updatedPreferences)
-    );
-
-    // Apply dark mode immediately
-    if (key === "darkMode") {
-      if (updatedPreferences.darkMode) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    }
-
-    return updatedPreferences;
-  });
-};
-
-  // ==========================================
-  // SAVE SETTINGS
-  // ==========================================
-
-  const handleSave = () => {
-    localStorage.setItem(
-      "preferences",
-      JSON.stringify(preferences)
-    );
-
-    setSaved(true);
-
-    setTimeout(() => {
-      setSaved(false);
-    }, 2000);
-
-    // Later when backend API is available:
-    //
-    // await updateProfile({
-    //   preferences,
-    // });
+    }));
   };
 
-  // ==========================================
-  // OPTIONS
-  // ==========================================
+  // Save to database
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      setSaved(false);
+
+      const res = await updatePreferences(preferences);
+
+      if (res.preferences) {
+        setPreferences({
+          ...DEFAULT_PREFERENCES,
+          ...res.preferences,
+        });
+      }
+
+      setSaved(true);
+
+      setTimeout(() => {
+        setSaved(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to save preferences:", error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to save preferences"
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const options = [
     {
       key: "emailNotifications",
       title: "Email Notifications",
       description:
-        "Receive important account and resume updates.",
+        "Receive important updates about your resume analysis and account.",
       icon: Bell,
     },
     {
       key: "aiSuggestions",
       title: "AI Suggestions",
       description:
-        "Enable AI-powered resume recommendations.",
+        "Get AI-powered suggestions to improve your resume and job readiness.",
       icon: Sparkles,
     },
     {
       key: "weeklyTips",
       title: "Weekly Resume Tips",
       description:
-        "Receive weekly resume improvement tips.",
+        "Receive weekly tips to improve your resume and ATS score.",
       icon: FileText,
     },
     {
@@ -143,6 +132,21 @@ const PreferenceSettings = () => {
       icon: preferences.darkMode ? Sun : Moon,
     },
   ];
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center rounded-3xl border border-slate-200 bg-white p-12 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <Loader2
+          className="animate-spin text-violet-600"
+          size={28}
+        />
+        <span className="ml-3 text-slate-500 dark:text-slate-400">
+          Loading preferences...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -173,8 +177,7 @@ const PreferenceSettings = () => {
       <div className="space-y-4">
         {options.map((item) => {
           const Icon = item.icon;
-          const enabled =
-            preferences[item.key];
+          const enabled = preferences[item.key];
 
           return (
             <motion.div
@@ -215,9 +218,7 @@ const PreferenceSettings = () => {
                 role="switch"
                 aria-checked={enabled}
                 aria-label={`Toggle ${item.title}`}
-                onClick={() =>
-                  toggle(item.key)
-                }
+                onClick={() => toggle(item.key)}
                 className={`relative h-7 w-14 shrink-0 cursor-pointer rounded-full transition-colors duration-300 ${
                   enabled
                     ? "bg-violet-600"
@@ -245,6 +246,7 @@ const PreferenceSettings = () => {
 
       <div className="mt-8 flex items-center justify-end">
         <motion.button
+          type="button"
           whileHover={{
             scale: 1.02,
           }}
@@ -252,13 +254,22 @@ const PreferenceSettings = () => {
             scale: 0.97,
           }}
           onClick={handleSave}
-          className={`flex cursor-pointer items-center gap-2 rounded-xl px-6 py-3 font-semibold text-white shadow-lg transition ${
+          disabled={saving}
+          className={`flex cursor-pointer items-center gap-2 rounded-xl px-6 py-3 font-semibold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-60 ${
             saved
               ? "bg-emerald-500 shadow-emerald-100"
               : "bg-gradient-to-r from-violet-600 to-purple-600 shadow-violet-200 hover:shadow-xl"
           }`}
         >
-          {saved ? (
+          {saving ? (
+            <>
+              <Loader2
+                size={18}
+                className="animate-spin"
+              />
+              Saving...
+            </>
+          ) : saved ? (
             <>
               <Check size={18} />
               Saved

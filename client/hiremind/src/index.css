@@ -270,6 +270,10 @@ input[type="reset"] {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+}
+
 /* =========================
    GRAY TEXT - DARK MODE
 ========================= */

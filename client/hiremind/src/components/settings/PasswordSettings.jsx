@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Lock,
   Eye,
   EyeOff,
   Loader2,
   Save,
 } from "lucide-react";
-import axios from "axios";
+
 import { changePassword } from "../../services/userService";
 
 const PasswordSettings = () => {
@@ -51,31 +50,20 @@ const PasswordSettings = () => {
 
     try {
       setSaving(true);
-const token =
-  localStorage.getItem("token") ||
-  sessionStorage.getItem("token");
 
-      const res = await axios.put(
-        "http://localhost:5000/api/auth/change-password",
-        {
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Use userService instead of direct Axios
+      const res = await changePassword({
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      });
 
-      alert(res.data.message);
+      alert(res.message || "Password changed successfully");
 
       setFormData({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-
     } catch (error) {
       alert(
         error.response?.data?.message ||
@@ -94,8 +82,7 @@ const token =
     setShow,
   }) => (
     <div>
-      <label className="mb-2 flex items-center gap-2 font-semibold text-slate-700">
-        <Lock size={18} />
+      <label className="mb-2 block font-semibold text-slate-700">
         {label}
       </label>
 
@@ -111,7 +98,7 @@ const token =
         <button
           type="button"
           onClick={() => setShow(!show)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
+          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-violet-600"
         >
           {show ? (
             <EyeOff size={20} />
@@ -130,11 +117,15 @@ const token =
       animate={{ opacity: 1, y: 0 }}
       className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm"
     >
-      <h2 className="mb-8 text-2xl font-bold text-slate-800">
+      <h2 className="text-2xl font-bold text-slate-800">
         Change Password
       </h2>
 
-      <div className="space-y-6">
+      <p className="mt-1 text-sm text-slate-500">
+        Update your password to keep your account secure.
+      </p>
+
+      <div className="mt-6 space-y-6">
         <PasswordInput
           label="Current Password"
           name="currentPassword"
@@ -163,7 +154,7 @@ const token =
       <button
         type="submit"
         disabled={saving}
-        className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 px-6 py-3 text-white transition hover:scale-105 disabled:cursor-not-allowed"
+        className="mt-8 flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 px-6 py-3 text-white transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {saving ? (
           <>

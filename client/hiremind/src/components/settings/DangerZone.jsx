@@ -1,74 +1,193 @@
-import { motion } from "framer-motion";
-import { LogOut, AlertTriangle } from "lucide-react";
-import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LogOut,
+  AlertTriangle,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { logoutUser } from "../../services/authService";
+import { deleteAccount } from "../../services/userService";
 
 const DangerZone = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+ 
+
+  // =========================
+  // DELETE ACCOUNT
+  // =========================
+  const handleDeleteAccount = async () => {
     try {
-     const token =
-  localStorage.getItem("token") ||
-  sessionStorage.getItem("token");
+      setDeleting(true);
 
-      await logoutUser(
-        "http://localhost:5000/api/auth/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const data = await deleteAccount();
 
-      localStorage.removeItem("token");
-      sessionStorage.getItem("token");
-      localStorage.removeItem("user");
+      if (data.success) {
+        // Clear authentication data
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        localStorage.removeItem("user");
 
-      alert("Logged out successfully");
+        setShowDeleteModal(false);
 
-      navigate("/login");
+        alert("Your account has been deleted successfully.");
+
+        navigate("/login");
+      }
     } catch (error) {
+      console.error("Delete account error:", error);
+
       alert(
-        error.response?.data?.message || "Unable to logout"
+        error.response?.data?.message ||
+          "Unable to delete account"
       );
+    } finally {
+      setDeleting(false);
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm"
-    >
-      <div className="flex items-center gap-3">
-        <AlertTriangle
-          size={28}
-          className="text-red-600"
-        />
-
-        <h2 className="text-2xl font-bold text-red-700">
-          Danger Zone
-        </h2>
-      </div>
-
-      <p className="mt-3 text-slate-600">
-        Logging out will end your current session.
-        You can log in again anytime using your
-        credentials.
-      </p>
-
-      <button
-        onClick={handleLogout}
-        className="mt-8 flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-white transition hover:bg-red-700"
+    <>
+      {/* =========================
+          DANGER ZONE
+      ========================= */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm"
       >
-        <LogOut size={18} />
-        Logout
-      </button>
-    </motion.div>
+        {/* Header */}
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl bg-red-100 p-3 text-red-600">
+            <AlertTriangle size={24} />
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-red-700">
+              Danger Zone
+            </h2>
+
+            <p className="mt-1 text-sm text-red-600">
+              Actions here can affect your account permanently.
+            </p>
+          </div>
+        </div>
+
+        
+
+        {/* =========================
+            DELETE ACCOUNT
+        ========================= */}
+        <div className="mt-6 rounded-2xl border border-red-300 bg-white p-6">
+          <div className="flex items-start gap-3">
+            <Trash2
+              size={22}
+              className="mt-1 text-red-600"
+            />
+
+            <div>
+              <h3 className="text-lg font-semibold text-red-700">
+                Delete Account
+              </h3>
+
+              <p className="mt-2 text-slate-600">
+                Permanently delete your HireMind account,
+                profile, preferences, and all uploaded
+                resumes. This action cannot be undone.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="mt-6 flex cursor-pointer items-center gap-2 rounded-xl border border-red-600 px-6 py-3 font-medium text-red-600 transition hover:bg-red-600 hover:text-white"
+          >
+            <Trash2 size={18} />
+            Delete Account
+          </button>
+        </div>
+      </motion.div>
+
+    
+      <AnimatePresence>
+        {showDeleteModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-md rounded-3xl border border-red-500/20 bg-slate-900 p-7 shadow-2xl"
+            >
+              {/* Close */}
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                className="absolute right-5 top-5 cursor-pointer rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:cursor-not-allowed"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Icon */}
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
+                <AlertTriangle size={28} />
+              </div>
+
+              {/* Heading */}
+              <h2 className="mt-5 text-2xl font-bold text-white">
+                Delete Account?
+              </h2>
+
+              {/* Description */}
+              <p className="mt-3 leading-6 text-slate-400">
+                Are you sure you want to permanently delete
+                your HireMind account?
+              </p>
+
+              <p className="mt-3 text-sm leading-6 text-red-400">
+                Your profile, preferences, and uploaded
+                resumes will be permanently deleted.
+                This action cannot be undone.
+              </p>
+
+              {/* Buttons */}
+              <div className="mt-7 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleting}
+                  className="cursor-pointer rounded-xl border border-slate-700 bg-slate-800 px-5 py-3 font-medium text-slate-300 transition hover:bg-slate-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="flex cursor-pointer items-center gap-2 rounded-xl bg-red-600 px-5 py-3 font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Trash2 size={18} />
+
+                  {deleting
+                    ? "Deleting..."
+                    : "Delete Account"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

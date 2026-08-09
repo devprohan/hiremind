@@ -38,5 +38,32 @@ export const changePassword = async (data) => {
   return response.data;
 };
 
+export const getPreferences = async () => {
+  const res = await axios.get(`${API}/preferences`, {
+    headers: authHeader(),
+  });
+
+  return res.data;
+};
 
 
+
+export const updatePreferences = async (preferences) => {
+  const res = await axios.put(
+    `${API}/preferences`,
+    preferences,
+    {
+      headers: authHeader(),
+    }
+  );
+
+  return res.data;
+};
+
+export const deleteAccount = async () => {
+  const res = await axios.delete(`${API}/account`, {
+    headers: authHeader(),
+  });
+
+  return res.data;
+};

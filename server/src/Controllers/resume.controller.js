@@ -1,4 +1,6 @@
 const Resume = require("../Models/resume.model.js");
+const User = require("../Models/user.model.js");
+const { sendAnalysisEmail } = require("../utils/sendAnalysisEmail.js");
 const extractTextFromPDF = require("../utils/pdfExtractor.js");
 const analyzeResume = require("../Services/resumeAnalysis.service.js");
 const cloudinary = require("../config/cloudinary.js");
@@ -25,7 +27,7 @@ const uploadResume = async (req, res) => {
 
     // Extract PDF text
     const resumeText = await extractTextFromPDF(resume.resumeUrl);
-
+    resume.resumeText = resumeText;
     // Gemini Analysis
     const analysis = await analyzeResume(resumeText);
 
@@ -66,6 +68,25 @@ const uploadResume = async (req, res) => {
     resume.status = "Completed";
 
     await resume.save();
+
+    const user = await User.findById(req.user._id);
+
+    const user = await User.findById(req.user._id);
+
+if (user?.preferences?.emailNotifications === true) {
+  try {
+    await sendAnalysisEmail(
+      user.email,
+      user.fullName,
+      resume.atsScore
+    );
+  } catch (emailError) {
+    console.error(
+      "Failed to send analysis email:",
+      emailError.message
+    );
+  }
+}
 
     return res.status(201).json({
       success: true,
@@ -212,6 +233,16 @@ const reanalyzeResume = async (req, res) => {
 
     await resume.save();
 
+    const user = await User.findById(req.user._id);
+
+    if (user && user.preferences.emailNotifications) {
+      try {
+        await sendAnalysisEmail(user.email, user.fullName, resume.atsScore);
+      } catch (emailError) {
+        console.error("Failed to send analysis email:", emailError.message);
+      }
+    }
+
     return res.status(200).json({
       success: true,
       message: "Resume re-analyzed successfully",
@@ -225,47 +256,42 @@ const reanalyzeResume = async (req, res) => {
   }
 };
 
-
 const downloadResume = async (req, res) => {
-    try {
-        const resume = await Resume.findOne({
-            _id: req.params.id,
-            user: req.user._id,
-        });
+  try {
+    const resume = await Resume.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
 
-        if (!resume) {
-            return res.status(404).json({
-                success: false,
-                message: "Resume not found",
-            });
-        }
-
-        const response = await axios.get(resume.resumeUrl, {
-            responseType: "arraybuffer",
-        });
-
-        res.setHeader("Content-Type", "application/pdf");
-
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename="${resume.originalName}"`
-        );
-
-        res.setHeader(
-            "Content-Length",
-            response.data.length
-        );
-
-        return res.send(response.data);
-
-    } catch (error) {
-        console.error("Download Resume Error:", error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Failed to download resume",
-        });
+    if (!resume) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found",
+      });
     }
+
+    const response = await axios.get(resume.resumeUrl, {
+      responseType: "arraybuffer",
+    });
+
+    res.setHeader("Content-Type", "application/pdf");
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${resume.originalName}"`,
+    );
+
+    res.setHeader("Content-Length", response.data.length);
+
+    return res.send(response.data);
+  } catch (error) {
+    console.error("Download Resume Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to download resume",
+    });
+  }
 };
 
 module.exports = {
@@ -274,5 +300,5 @@ module.exports = {
   getResumeById,
   deleteResume,
   reanalyzeResume,
-  downloadResume
+  downloadResume,
 };

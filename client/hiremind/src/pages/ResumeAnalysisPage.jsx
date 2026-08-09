@@ -12,19 +12,22 @@ import SuggestionsCard from "../components/resume-analysis/SuggestionsCard";
 import FeedbackTab from "../components/resume-analysis/FeedbackTab";
 
 import { getResumeById } from "../services/resumeService";
+import { getPreferences } from "../services/userService";
 
 export default function ResumeAnalysisPage() {
   const { id } = useParams();
 
   const [resume, setResume] = useState(null);
+  const [preferences, setPreferences] = useState(null);
   const [activeTab, setActiveTab] = useState("Overview");
-
   const [error, setError] = useState("");
+
+  // Fetch Resume
   useEffect(() => {
     const fetchResume = async () => {
       try {
         const { resume } = await getResumeById(id);
-        console.log(resume);
+        console.log("Resume:", resume);
 
         setResume(resume);
       } catch (err) {
@@ -36,19 +39,48 @@ export default function ResumeAnalysisPage() {
     fetchResume();
   }, [id]);
 
-  if (error) {
-    return <div className="p-10 text-center text-red-500">{error}</div>;
-  }
+  // Fetch Preferences
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const data = await getPreferences();
 
-  if (!resume) {
+        console.log("Preferences:", data.preferences);
+
+        if (data.success) {
+          setPreferences(data.preferences);
+        }
+      } catch (error) {
+        console.error("Failed to load preferences:", error);
+
+        // Default behavior if preferences fail to load
+        setPreferences({
+          aiSuggestions: true,
+        });
+      }
+    };
+
+    loadPreferences();
+  }, []);
+
+  // Error
+  if (error) {
     return (
-      <div className="flex h-[70vh] items-center justify-center">
-        <div className="text-lg font-medium text-slate-500">
-          Loading Resume...
-        </div>
+      <div className="flex min-h-[400px] items-center justify-center">
+        <p className="text-red-500">{error}</p>
       </div>
     );
   }
+
+  // Loading
+  if (!resume || !preferences) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <p className="text-slate-500">Loading Resume...</p>
+      </div>
+    );
+  }
+
   const breakdown = [
     {
       title: "Content",
@@ -69,30 +101,58 @@ export default function ResumeAnalysisPage() {
   ];
 
   return (
-    <div className="p-8">
+    <div className="space-y-8">
+
       <Header resume={resume} />
 
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Tabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
+      {/* Overview */}
       {activeTab === "Overview" && (
         <>
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid gap-8 lg:grid-cols-2">
             <ATSScoreCard score={resume.atsScore} />
-            <ScoreBreakdown breakdown={breakdown} />
+
+            <ScoreBreakdown
+              breakdown={breakdown}
+            />
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 mt-8">
-            <StrengthsCard strengths={resume.strengths || []} />
-            <WeaknessCard weaknesses={resume.weaknesses || []} />
+          <div className="mt-8 grid gap-8 lg:grid-cols-2">
+            <StrengthsCard
+              strengths={resume.strengths || []}
+            />
+
+            <WeaknessCard
+              weaknesses={resume.weaknesses || []}
+            />
           </div>
         </>
       )}
 
-      {activeTab === "Skills" && <SkillsTab resume={resume} />}
+      {/* Skills */}
+      {activeTab === "Skills" && (
+        <SkillsTab resume={resume} />
+      )}
 
-      {activeTab === "Suggestions" && <SuggestionsCard resume={resume} />}
+      {/* AI Suggestions */}
+      {activeTab === "Suggestions" && (
+        <SuggestionsCard
+          resume={resume}
+          aiSuggestions={
+            preferences.aiSuggestions === true
+          }
+        />
+      )}
 
-      {activeTab === "Feedback" && <FeedbackTab resume={resume} />}
+      {/* Feedback */}
+      {activeTab === "Feedback" && (
+        <FeedbackTab resume={resume} />
+      )}
+
     </div>
   );
 }

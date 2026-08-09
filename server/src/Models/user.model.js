@@ -80,6 +80,24 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    preferences: {
+  emailNotifications: {
+    type: Boolean,
+    default: true,
+  },
+  aiSuggestions: {
+    type: Boolean,
+    default: true,
+  },
+  weeklyTips: {
+    type: Boolean,
+    default: false,
+  },
+  darkMode: {
+    type: Boolean,
+    default: false,
+  },
+},
   },
   {
     timestamps: true,
