@@ -96,11 +96,10 @@ export default function LoginPage() {
     return `w-full rounded-xl border bg-white px-4 py-3
     text-slate-800 outline-none transition duration-300
     placeholder:text-slate-400
-    ${
-      errors[fieldName]
+    ${errors[fieldName]
         ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
         : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-    }`;
+      }`;
   };
 
   return (

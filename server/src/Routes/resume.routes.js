@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const { uploadResume, getMyResumes, getResumeById, deleteResume, reanalyzeResume } = require("../Controllers/resume.controller.js");
+const { uploadResume, getMyResumes, getResumeById, deleteResume, reanalyzeResume, downloadResume } = require("../Controllers/resume.controller.js");
 const protect = require("../Middlewares/auth.middleware.js");
 const upload = require("../Middlewares/upload.middleware.js");
 
@@ -11,5 +11,10 @@ router.get("/my-resumes", protect, getMyResumes)
 router.get("/:id", protect, getResumeById)
 router.delete("/:id", protect, deleteResume)
 router.put("/reanalyze/:id", protect, reanalyzeResume)
+router.get(
+    "/download/:id",
+    protect,
+    downloadResume
+);
 
 module.exports = router

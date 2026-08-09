@@ -2,6 +2,7 @@ const Resume = require("../Models/resume.model.js");
 const extractTextFromPDF = require("../utils/pdfExtractor.js");
 const analyzeResume = require("../Services/resumeAnalysis.service.js");
 const cloudinary = require("../config/cloudinary.js");
+const axios = require("axios");
 
 // Upload Resume
 const uploadResume = async (req, res) => {
@@ -224,10 +225,54 @@ const reanalyzeResume = async (req, res) => {
   }
 };
 
+
+const downloadResume = async (req, res) => {
+    try {
+        const resume = await Resume.findOne({
+            _id: req.params.id,
+            user: req.user._id,
+        });
+
+        if (!resume) {
+            return res.status(404).json({
+                success: false,
+                message: "Resume not found",
+            });
+        }
+
+        const response = await axios.get(resume.resumeUrl, {
+            responseType: "arraybuffer",
+        });
+
+        res.setHeader("Content-Type", "application/pdf");
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${resume.originalName}"`
+        );
+
+        res.setHeader(
+            "Content-Length",
+            response.data.length
+        );
+
+        return res.send(response.data);
+
+    } catch (error) {
+        console.error("Download Resume Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to download resume",
+        });
+    }
+};
+
 module.exports = {
   uploadResume,
   getMyResumes,
   getResumeById,
   deleteResume,
   reanalyzeResume,
+  downloadResume
 };
