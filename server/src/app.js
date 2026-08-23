@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const cookieParser = require("cookie-parser");
 const authRoutes = require("./Routes/auth.routes.js");
 const userRoutes = require("./Routes/user.routes.js");
 const resumeRoutes = require("./Routes/resume.routes.js");
@@ -11,11 +11,15 @@ const careerRoutes = require("./Routes/career.routes.js")
 
 const app = express();
 
+
+
+
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true,
 }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {

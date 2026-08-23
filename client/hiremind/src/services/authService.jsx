@@ -2,18 +2,17 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/auth";
 
-export const getToken = () => {
-  return (
-    localStorage.getItem("token") ||
-    sessionStorage.getItem("token")
-  );
-};
+const authAPI = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
 
+// Register
 export const registerUser = async (userData) => {
-  const response = await axios.post(`${API_URL}/register`, userData);
+  const response = await authAPI.post("/register", userData);
 
-  // Remove previous account data
- localStorage.removeItem("token");
+  // Remove old client-side account data
+  localStorage.removeItem("token");
   sessionStorage.removeItem("token");
 
   localStorage.removeItem("user");
@@ -22,70 +21,68 @@ export const registerUser = async (userData) => {
   localStorage.removeItem("profile");
   sessionStorage.removeItem("profile");
 
-  // Store NEW user's token
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
-  }
-
-  // Store new user if backend sends it
+  // Store only user information
+  // JWT is now stored in HttpOnly cookie by backend
   if (response.data.user) {
-    localStorage.setItem("user", JSON.stringify(response.data.user));
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
   }
 
   return response.data;
 };
 
+// Login
 export const loginUser = async (userData) => {
-  const response = await axios.post(`${API_URL}/login`, userData);
+  const response = await authAPI.post(
+    "/login",
+    userData
+  );
 
-  const { token ,user} = response.data;
+  const { user } = response.data;
 
+  // Remove old token/user data
   localStorage.removeItem("token");
   sessionStorage.removeItem("token");
 
   localStorage.removeItem("user");
   sessionStorage.removeItem("user");
 
+  // Store only user information
+  // Authentication token is handled by HttpOnly cookie
+  if (user) {
+    const storage = userData.rememberMe
+      ? localStorage
+      : sessionStorage;
 
-  if (userData.rememberMe) {
-    //keep login for longer
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-  } else {
-    sessionStorage.setItem("token", token);
-    sessionStorage.setItem("user", JSON.stringify(user));
+    storage.setItem(
+      "user",
+      JSON.stringify(user)
+    );
   }
-
-  
 
   return response.data;
 };
 
+// Logout
 export const logoutUser = async () => {
-  const token = getToken();
-
   try {
-    await axios.post(
-      `${API_URL}/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    await authAPI.post("/logout");
   } finally {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-
+    // Remove frontend user data
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
 
     localStorage.removeItem("profile");
     sessionStorage.removeItem("profile");
+
+    // Token is cleared by backend using res.clearCookie()
   }
 };
 
+// Google Login
 export const googleLogin = () => {
-  window.location.href = "http://localhost:8080/api/auth/google";
+  window.location.href =
+    "http://localhost:8080/api/auth/google";
 };

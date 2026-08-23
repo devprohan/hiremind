@@ -1,69 +1,67 @@
 import axios from "axios";
-import { getToken } from "./authService";
+
 const API = "http://localhost:8080/api/users";
 
-const authHeader = () => ({
-  Authorization: `Bearer ${getToken()}`,
-});
+const authConfig = {
+  withCredentials: true,
+};
 
+// Get current user
 export const getCurrentUser = async () => {
-  const res = await axios.get(`${API}/me`, {
-    headers: authHeader(),
-  });
+  const res = await axios.get(`${API}/me`, authConfig);
 
   return res.data;
 };
 
+// Update profile
 export const updateProfile = async (data) => {
-  const res = await axios.put(`${API}/profile`, data, {
-    headers: authHeader(),
-  });
-
-  return res.data;
-};
-
-
-export const changePassword = async (data) => {
- 
-  const response = await axios.put(
-    "http://localhost:8080/api/auth/change-password",
+  const res = await axios.put(
+    `${API}/profile`,
     data,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
+    authConfig
   );
 
-  return response.data;
+  return res.data;
 };
 
-export const getPreferences = async () => {
-  const res = await axios.get(`${API}/preferences`, {
-    headers: authHeader(),
-  });
+// Change password
+export const changePassword = async (data) => {
+  const res = await axios.put(
+    "http://localhost:8080/api/auth/change-password",
+    data,
+    authConfig
+  );
 
   return res.data;
 };
 
+// Get preferences
+export const getPreferences = async () => {
+  const res = await axios.get(
+    `${API}/preferences`,
+    authConfig
+  );
 
+  return res.data;
+};
 
+// Update preferences
 export const updatePreferences = async (preferences) => {
   const res = await axios.put(
     `${API}/preferences`,
     preferences,
-    {
-      headers: authHeader(),
-    }
+    authConfig
   );
 
   return res.data;
 };
 
+// Delete account
 export const deleteAccount = async () => {
-  const res = await axios.delete(`${API}/account`, {
-    headers: authHeader(),
-  });
+  const res = await axios.delete(
+    `${API}/account`,
+    authConfig
+  );
 
   return res.data;
 };

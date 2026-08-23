@@ -3,29 +3,23 @@ const User = require("../Models/user.model.js");
 
 const protect = async (req, res, next) => {
   try {
-    let token;
+    const token = req.cookies.token;
 
-    // Check Authorization header
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
-
-    // If token not found
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Access Denied. No Token Provided",
+        message: "Access Denied. Not authenticated",
       });
     }
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
-    // Find user
-    const user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(decoded.id).select(
+      "-password"
+    );
 
     if (!user) {
       return res.status(404).json({
@@ -34,11 +28,9 @@ const protect = async (req, res, next) => {
       });
     }
 
-    // Attach user to request
     req.user = user;
 
     next();
-
   } catch (error) {
     return res.status(401).json({
       success: false,

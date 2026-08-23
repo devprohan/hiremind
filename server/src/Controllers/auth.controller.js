@@ -5,6 +5,16 @@ const jwt = require("jsonwebtoken");
 const { generateOTP } = require("../utils/otp");
 const { sendOTPEmail } = require("../utils/sendEmail.js");
 
+const getCookieOptions = (rememberMe = false) => ({
+  httpOnly: true,
+
+  secure: process.env.NODE_ENV === "production",
+
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+
+  maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
+});
+
 const registerUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
@@ -94,10 +104,11 @@ const loginUser = async (req, res) => {
       },
     );
 
+    res.cookie("token", token, getCookieOptions(rememberMe));
+
     res.status(200).json({
       success: true,
       message: "Login Successful",
-      token,
       user: {
         id: user._id,
         fullName: user.fullName,
@@ -112,7 +123,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-
 const googleLogin = async (req, res) => {
   try {
     const token = jwt.sign(
@@ -125,20 +135,16 @@ const googleLogin = async (req, res) => {
       }
     );
 
-    const user = {
-      id: req.user._id,
-      fullName: req.user.fullName,
-      email: req.user.email,
-      profileImage: req.user.profileImage,
-    };
+    res.cookie(
+      "token",
+      token,
+      getCookieOptions(false)
+    );
 
-    // Send token + user to frontend
     const frontendURL = "http://localhost:5173";
 
     return res.redirect(
-      `${frontendURL}/google-success?token=${encodeURIComponent(
-        token
-      )}&user=${encodeURIComponent(JSON.stringify(user))}`
+      `${frontendURL}/dashboard`
     );
   } catch (error) {
     console.error("Google Login Error:", error);
@@ -149,6 +155,7 @@ const googleLogin = async (req, res) => {
     });
   }
 };
+
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -283,7 +290,10 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    if (!user.resetPasswordOTPExpiry || user.resetPasswordOTPExpiry < new Date()) {
+    if (
+      !user.resetPasswordOTPExpiry ||
+      user.resetPasswordOTPExpiry < new Date()
+    ) {
       return res.status(400).json({
         success: false,
         message: "OTP has expired",
@@ -365,6 +375,15 @@ const changePassword = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? "none"
+          : "lax",
+    });
+
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",

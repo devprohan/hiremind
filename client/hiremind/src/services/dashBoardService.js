@@ -1,40 +1,36 @@
 import axios from "axios";
-import { getToken } from "./authService";
 
 const API_URL = "http://localhost:8080/api/dashboard";
 
-const getAuthConfig = () => {
-  
-
-  return {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  };
+const authConfig = {
+  withCredentials: true,
 };
 
+// Dashboard Stats
 export const getDashboardStats = async () => {
   const response = await axios.get(
     `${API_URL}/stats`,
-    getAuthConfig()
+    authConfig
   );
 
   return response.data;
 };
 
+// Recent Resumes
 export const getRecentResumes = async () => {
   const response = await axios.get(
     `${API_URL}/recent`,
-    getAuthConfig()
+    authConfig
   );
 
   return response.data;
 };
 
+// Skills Analytics
 export const getSkillsAnalytics = async () => {
   const response = await axios.get(
     `${API_URL}/skills`,
-    getAuthConfig()
+    authConfig
   );
 
   return response.data;
