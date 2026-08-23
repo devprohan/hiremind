@@ -54,13 +54,14 @@ const PreferenceSettings = () => {
   }, []);
 
   // Apply dark mode
-  useEffect(() => {
-    if (preferences.darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [preferences.darkMode]);
+ useEffect(() => {
+  if (loading) return;
+
+  document.documentElement.classList.toggle(
+    "dark",
+    preferences.darkMode === true
+  );
+}, [preferences.darkMode, loading]);
 
   // Toggle
   const toggle = (key) => {
@@ -72,35 +73,42 @@ const PreferenceSettings = () => {
 
   // Save to database
   const handleSave = async () => {
-    try {
-      setSaving(true);
-      setSaved(false);
+  try {
+    setSaving(true);
+    setSaved(false);
 
-      const res = await updatePreferences(preferences);
+    const res = await updatePreferences(preferences);
 
-      if (res.preferences) {
-        setPreferences({
-          ...DEFAULT_PREFERENCES,
-          ...res.preferences,
-        });
-      }
+    if (res.preferences) {
+      const updatedPreferences = {
+        ...DEFAULT_PREFERENCES,
+        ...res.preferences,
+      };
 
-      setSaved(true);
+      setPreferences(updatedPreferences);
 
-      setTimeout(() => {
-        setSaved(false);
-      }, 2000);
-    } catch (error) {
-      console.error("Failed to save preferences:", error);
-
-      alert(
-        error.response?.data?.message ||
-          "Failed to save preferences"
+      document.documentElement.classList.toggle(
+        "dark",
+        updatedPreferences.darkMode === true
       );
-    } finally {
-      setSaving(false);
     }
-  };
+
+    setSaved(true);
+
+    setTimeout(() => {
+      setSaved(false);
+    }, 2000);
+  } catch (error) {
+    console.error("Failed to save preferences:", error);
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to save preferences"
+    );
+  } finally {
+    setSaving(false);
+  }
+};
 
   const options = [
     {
