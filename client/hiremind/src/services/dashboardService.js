@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/dashboard";
+const API_URL = `${import.meta.env.VITE_API_URL}/dashboard`;
 
 const authConfig = {
   withCredentials: true,
@@ -12,7 +12,6 @@ export const getDashboardStats = async () => {
     `${API_URL}/stats`,
     authConfig
   );
-
   return response.data;
 };
 
@@ -22,7 +21,6 @@ export const getRecentResumes = async () => {
     `${API_URL}/recent`,
     authConfig
   );
-
   return response.data;
 };
 
@@ -32,6 +30,5 @@ export const getSkillsAnalytics = async () => {
     `${API_URL}/skills`,
     authConfig
   );
-
   return response.data;
 };

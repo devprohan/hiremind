@@ -1,12 +1,11 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
 // USER
-
 export const getCurrentUser = async () => {
   const res = await API.get("/users/me");
   return res.data;
@@ -18,7 +17,6 @@ export const updateProfile = async (data) => {
 };
 
 // DASHBOARD
-
 export const getDashboardStats = async () => {
   const res = await API.get("/dashboard/stats");
   return res.data;
@@ -35,7 +33,6 @@ export const getSkillsAnalytics = async () => {
 };
 
 // RESUMES
-
 export const getMyResumes = async () => {
   const res = await API.get("/resume/my-resumes");
   return res.data;

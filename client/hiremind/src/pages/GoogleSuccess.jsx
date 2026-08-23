@@ -1,46 +1,39 @@
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 const GoogleSuccess = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const userData = searchParams.get("user");
-
-    if (!token) {
-      console.error("Google login token not found");
-      navigate("/login");
-      return;
-    }
-
-    // Save token
-    localStorage.setItem("token", token);
-
-    // Save user
-    if (userData) {
+    const verifyGoogleLogin = async () => {
       try {
-        const user = JSON.parse(userData);
-        localStorage.setItem("user", JSON.stringify(user));
-      } catch (error) {
-        console.error("Failed to parse Google user data:", error);
-      }
-    }
+        const response = await api.get("/users/me");
 
-    // Redirect to dashboard
-    navigate("/dashboard", { replace: true });
-  }, [navigate, searchParams]);
+        if (response.data?.user) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.user)
+          );
+        }
+
+        navigate("/dashboard", { replace: true });
+      } catch (error) {
+        console.error("Google login verification failed:", error);
+        navigate("/login", { replace: true });
+      }
+    };
+
+    verifyGoogleLogin();
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950">
       <div className="text-center">
         <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
-
         <h2 className="mt-5 text-xl font-semibold text-white">
           Signing you in...
         </h2>
-
         <p className="mt-2 text-slate-400">
           Please wait while we complete Google authentication.
         </p>
