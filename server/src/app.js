@@ -12,7 +12,7 @@ const careerRoutes = require("./Routes/career.routes.js")
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true,
 }));
 app.use(express.json());
@@ -29,7 +29,7 @@ app.use("/api/users/", userRoutes);
 app.use("/api/resume/", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/job", jobRoutes);
- app.use("/api/interview", interviewRoutes)
+app.use("/api/interview", interviewRoutes)
 app.use("/api/career", careerRoutes)
 
 
