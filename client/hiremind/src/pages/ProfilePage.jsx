@@ -24,7 +24,7 @@ const ProfilePage = () => {
   return (
     <div className="space-y-8 p-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">
+        <h1 className="text-4xl font-black text-slate-900 dark:text-white">
           My Profile
         </h1>
 

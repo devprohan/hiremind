@@ -6,11 +6,33 @@ export default function WeaknessCard({ weaknesses }) {
     <motion.div
       initial={{ opacity: 0, y: 25 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl shadow-md border border-gray-100 p-8"
+      className="
+        rounded-2xl
+        border border-gray-100
+        bg-white
+        p-8
+        shadow-md
+
+        dark:border-slate-700
+        dark:bg-slate-900
+      "
     >
-      <h2 className="text-xl font-semibold mb-6">
+      {/* Heading */}
+
+      <h2
+        className="
+          mb-6
+          text-xl
+          font-semibold
+          text-gray-900
+
+          dark:text-white
+        "
+      >
         Areas to Improve
       </h2>
+
+      {/* Weaknesses */}
 
       <div className="space-y-5">
         {weaknesses.map((item, index) => (
@@ -19,11 +41,23 @@ export default function WeaknessCard({ weaknesses }) {
             className="flex gap-4"
           >
             <AlertCircle
-              className="text-red-500 mt-1"
+              className="
+                mt-1
+                shrink-0
+                text-red-500
+
+                dark:text-red-400
+              "
               size={20}
             />
 
-            <p className="text-gray-700">
+            <p
+              className="
+                text-gray-700
+
+                dark:text-slate-200
+              "
+            >
               {item}
             </p>
           </div>

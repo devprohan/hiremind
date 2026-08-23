@@ -14,17 +14,49 @@ export default function ResumeCard({
     ? resume.skills
     : Object.values(resume.skills || {}).flat();
 
+  // =====================================================
+  // ATS SCORE COLOR
+  // =====================================================
+
   const scoreColor = () => {
     if (resume.atsScore >= 90) {
-      return "text-emerald-600 bg-emerald-50 border-emerald-200";
+      return `
+        text-emerald-600
+        bg-emerald-50
+        border-emerald-200
+
+        dark:text-emerald-400
+        dark:bg-emerald-500/10
+        dark:border-emerald-500/30
+      `;
     }
 
     if (resume.atsScore >= 75) {
-      return "text-amber-500 bg-amber-50 border-amber-200";
+      return `
+        text-amber-500
+        bg-amber-50
+        border-amber-200
+
+        dark:text-amber-400
+        dark:bg-amber-500/10
+        dark:border-amber-500/30
+      `;
     }
 
-    return "text-red-500 bg-red-50 border-red-200";
+    return `
+      text-red-500
+      bg-red-50
+      border-red-200
+
+      dark:text-red-400
+      dark:bg-red-500/10
+      dark:border-red-500/30
+    `;
   };
+
+  // =====================================================
+  // DOWNLOAD RESUME
+  // =====================================================
 
   const handleDownload = async () => {
     try {
@@ -32,6 +64,8 @@ export default function ResumeCard({
         `http://localhost:8080/api/resume/download/${resume._id}`,
         {
           method: "GET",
+
+          // HTTP-only cookie
           credentials: "include",
         }
       );
@@ -51,11 +85,14 @@ export default function ResumeCard({
 
       const blob = await response.blob();
 
-      const url = window.URL.createObjectURL(blob);
+      const url =
+        window.URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
+      const link =
+        document.createElement("a");
 
       link.href = url;
+
       link.download =
         resume.originalName || "resume.pdf";
 
@@ -69,7 +106,10 @@ export default function ResumeCard({
         window.URL.revokeObjectURL(url);
       }, 1000);
     } catch (error) {
-      console.error("Download Error:", error);
+      console.error(
+        "Download Error:",
+        error
+      );
 
       alert(
         error.message ||
@@ -79,33 +119,102 @@ export default function ResumeCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md">
+    <div
+      className="
+        rounded-3xl
 
-      {/* Top */}
+        border
+        border-slate-200
+
+        bg-white
+
+        p-6
+
+        shadow-sm
+
+        transition-all
+        duration-300
+
+        hover:shadow-md
+
+        dark:border-slate-700
+        dark:bg-slate-900
+        dark:hover:border-slate-600
+      "
+    >
+      {/* =================================================
+          TOP
+      ================================================= */}
+
       <div className="flex items-start justify-between gap-4">
 
-        <div className="flex items-start gap-3">
+        {/* FILE INFO */}
 
-          <div className="rounded-xl bg-violet-100 p-3">
+        <div className="flex min-w-0 items-start gap-3">
+
+          {/* FILE ICON */}
+
+          <div
+            className="
+              shrink-0
+              rounded-xl
+
+              bg-violet-100
+
+              p-3
+
+              dark:bg-violet-500/20
+            "
+          >
             <FileText
-              className="text-violet-600"
+              className="
+                text-violet-600
+
+                dark:text-violet-400
+              "
               size={24}
             />
           </div>
 
-          <div>
-            <h2 className="text-lg font-bold text-slate-800">
+          {/* DETAILS */}
+
+          <div className="min-w-0">
+            <h2
+              className="
+                truncate
+                text-lg
+                font-bold
+                text-slate-800
+
+                dark:text-slate-900
+              "
+            >
               {resume.originalName}
             </h2>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p
+              className="
+                mt-1
+                text-sm
+                text-slate-500
+
+                dark:text-slate-500
+              "
+            >
               Uploaded{" "}
               {new Date(
                 resume.createdAt
               ).toLocaleDateString()}
             </p>
 
-            <p className="text-sm text-slate-400">
+            <p
+              className="
+                text-sm
+                text-slate-400
+
+                dark:text-slate-400
+              "
+            >
               {resume.fileSize
                 ? `${(
                     resume.fileSize / 1024
@@ -113,12 +222,23 @@ export default function ResumeCard({
                 : "Unknown size"}
             </p>
           </div>
-
         </div>
 
-        {/* ATS Score */}
+        {/* =================================================
+            ATS SCORE
+        ================================================= */}
+
         <div
-          className={`rounded-2xl border px-4 py-2 text-center ${scoreColor()}`}
+          className={`
+            shrink-0
+            rounded-2xl
+            border
+            px-4
+            py-2
+            text-center
+
+            ${scoreColor()}
+          `}
         >
           <p className="text-3xl font-black">
             {resume.atsScore ?? 0}
@@ -128,10 +248,12 @@ export default function ResumeCard({
             ATS Score
           </p>
         </div>
-
       </div>
 
-      {/* Skills */}
+      {/* =================================================
+          SKILLS
+      ================================================= */}
+
       <div className="mt-6 flex flex-wrap gap-2">
 
         {skills
@@ -139,56 +261,194 @@ export default function ResumeCard({
           .map((skill, index) => (
             <span
               key={`${skill}-${index}`}
-              className="rounded-full bg-violet-100 px-3 py-1 text-xs font-medium text-violet-700"
+              className="
+                rounded-full
+
+                bg-violet-100
+
+                px-3
+                py-1
+
+                text-xs
+                font-medium
+                text-violet-700
+
+                dark:bg-violet-500/15
+                dark:text-violet-400
+              "
             >
               {skill}
             </span>
           ))}
 
         {skills.length > 5 && (
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">
+          <span
+            className="
+              rounded-full
+
+              bg-slate-100
+
+              px-3
+              py-1
+
+              text-xs
+              font-medium
+              text-slate-500
+
+              dark:bg-slate-800
+              dark:text-slate-400
+            "
+          >
             +{skills.length - 5} more
           </span>
         )}
-
       </div>
 
-      {/* Bottom */}
-      <div className="mt-6 flex items-center justify-between gap-3 border-t pt-5">
+      {/* =================================================
+          BOTTOM ACTIONS
+      ================================================= */}
 
-        {/* View */}
+      <div
+        className="
+          mt-6
+          flex
+          items-center
+          justify-between
+          gap-3
+
+          border-t
+          border-slate-200
+
+          pt-5
+
+          dark:border-slate-700
+        "
+      >
+
+        {/* VIEW */}
+
         <button
+          type="button"
           onClick={() =>
             onView(resume._id)
           }
-          className="flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm transition hover:bg-slate-100"
+          className="
+            flex
+            cursor-pointer
+            items-center
+            gap-2
+
+            rounded-xl
+
+            border
+            border-slate-200
+
+            bg-white
+
+            px-4
+            py-2
+
+            text-sm
+            font-medium
+            text-slate-700
+
+            transition
+
+            hover:bg-slate-100
+
+            dark:border-slate-700
+            dark:bg-slate-900
+            dark:text-slate-300
+            dark:hover:bg-slate-800
+          "
         >
           <Eye size={16} />
+
           View
         </button>
 
-        {/* Download */}
+        {/* DOWNLOAD */}
+
         <button
+          type="button"
           onClick={handleDownload}
-          className="flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm transition hover:bg-slate-100"
+          className="
+            flex
+            cursor-pointer
+            items-center
+            gap-2
+
+            rounded-xl
+
+            border
+            border-slate-200
+
+            bg-white
+
+            px-4
+            py-2
+
+            text-sm
+            font-medium
+            text-slate-700
+
+            transition
+
+            hover:bg-slate-100
+
+            dark:border-slate-700
+            dark:bg-slate-900
+            dark:text-slate-300
+            dark:hover:bg-slate-800
+          "
         >
           <Download size={16} />
+
           Download
         </button>
 
-        {/* Delete */}
+        {/* DELETE */}
+
         <button
+          type="button"
           onClick={() =>
             onDelete(resume._id)
           }
-          className="flex cursor-pointer items-center gap-2 rounded-xl border border-red-200 px-4 py-2 text-sm text-red-500 transition hover:bg-red-50"
+          className="
+            flex
+            cursor-pointer
+            items-center
+            gap-2
+
+            rounded-xl
+
+            border
+            border-red-200
+
+            bg-white
+
+            px-4
+            py-2
+
+            text-sm
+            font-medium
+            text-red-500
+
+            transition
+
+            hover:bg-red-50
+
+            dark:border-red-900/50
+            dark:bg-slate-900
+            dark:text-red-400
+            dark:hover:bg-red-500/10
+          "
         >
           <Trash2 size={16} />
+
           Delete
         </button>
-
       </div>
-
     </div>
   );
 }

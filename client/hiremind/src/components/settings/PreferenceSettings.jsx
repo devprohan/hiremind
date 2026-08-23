@@ -4,8 +4,6 @@ import {
   Bell,
   Sparkles,
   FileText,
-  Moon,
-  Sun,
   Check,
   Loader2,
 } from "lucide-react";
@@ -19,17 +17,21 @@ const DEFAULT_PREFERENCES = {
   emailNotifications: true,
   aiSuggestions: true,
   weeklyTips: false,
-  darkMode: false,
 };
 
 const PreferenceSettings = () => {
-  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
+  const [preferences, setPreferences] = useState(
+    DEFAULT_PREFERENCES
+  );
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Load preferences from database
+  // =====================================================
+  // LOAD PREFERENCES
+  // =====================================================
+
   useEffect(() => {
     const loadPreferences = async () => {
       try {
@@ -44,7 +46,10 @@ const PreferenceSettings = () => {
           });
         }
       } catch (error) {
-        console.error("Failed to load preferences:", error);
+        console.error(
+          "Failed to load preferences:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -53,62 +58,63 @@ const PreferenceSettings = () => {
     loadPreferences();
   }, []);
 
-  // Apply dark mode
- useEffect(() => {
-  if (loading) return;
+  // =====================================================
+  // TOGGLE PREFERENCE
+  // =====================================================
 
-  document.documentElement.classList.toggle(
-    "dark",
-    preferences.darkMode === true
-  );
-}, [preferences.darkMode, loading]);
-
-  // Toggle
   const toggle = (key) => {
     setPreferences((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
+
+    // Hide "Saved" state when user changes something
+    setSaved(false);
   };
 
-  // Save to database
+  // =====================================================
+  // SAVE PREFERENCES
+  // =====================================================
+
   const handleSave = async () => {
-  try {
-    setSaving(true);
-    setSaved(false);
-
-    const res = await updatePreferences(preferences);
-
-    if (res.preferences) {
-      const updatedPreferences = {
-        ...DEFAULT_PREFERENCES,
-        ...res.preferences,
-      };
-
-      setPreferences(updatedPreferences);
-
-      document.documentElement.classList.toggle(
-        "dark",
-        updatedPreferences.darkMode === true
-      );
-    }
-
-    setSaved(true);
-
-    setTimeout(() => {
+    try {
+      setSaving(true);
       setSaved(false);
-    }, 2000);
-  } catch (error) {
-    console.error("Failed to save preferences:", error);
 
-    alert(
-      error.response?.data?.message ||
-        "Failed to save preferences"
-    );
-  } finally {
-    setSaving(false);
-  }
-};
+      const res = await updatePreferences(
+        preferences
+      );
+
+      if (res.preferences) {
+        setPreferences({
+          ...DEFAULT_PREFERENCES,
+          ...res.preferences,
+        });
+      }
+
+      setSaved(true);
+
+      setTimeout(() => {
+        setSaved(false);
+      }, 2000);
+    } catch (error) {
+      console.error(
+        "Failed to save preferences:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to save preferences"
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // =====================================================
+  // PREFERENCE OPTIONS
+  // =====================================================
 
   const options = [
     {
@@ -132,29 +138,52 @@ const PreferenceSettings = () => {
         "Receive weekly tips to improve your resume and ATS score.",
       icon: FileText,
     },
-    {
-      key: "darkMode",
-      title: "Dark Mode",
-      description:
-        "Switch between light and dark appearance.",
-      icon: preferences.darkMode ? Sun : Moon,
-    },
   ];
 
-  // Loading state
+  // =====================================================
+  // LOADING STATE
+  // =====================================================
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center rounded-3xl border border-slate-200 bg-white p-12 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <div
+        className="
+          flex
+          items-center
+          justify-center
+          rounded-3xl
+          border
+          border-slate-200
+          bg-white
+          p-12
+          shadow-sm
+
+          dark:border-slate-700
+          dark:bg-slate-900
+        "
+      >
         <Loader2
           className="animate-spin text-violet-600"
           size={28}
         />
-        <span className="ml-3 text-slate-500 dark:text-slate-400">
+
+        <span
+          className="
+            ml-3
+            text-slate-500
+
+            dark:text-slate-400
+          "
+        >
           Loading preferences...
         </span>
       </div>
     );
   }
+
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
     <motion.div
@@ -166,21 +195,51 @@ const PreferenceSettings = () => {
         opacity: 1,
         y: 0,
       }}
-      className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+      className="
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-8
+        shadow-sm
+
+        dark:border-slate-700
+        dark:bg-slate-900
+      "
     >
-      {/* HEADER */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <h2
+          className="
+            text-2xl
+            font-bold
+            text-slate-900
+
+            dark:text-white
+          "
+        >
           Preferences
         </h2>
 
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <p
+          className="
+            mt-1
+            text-sm
+            text-slate-500
+
+            dark:text-slate-400
+          "
+        >
           Customize your HireMind experience.
         </p>
       </div>
 
-      {/* OPTIONS */}
+      {/* =================================================
+          OPTIONS
+      ================================================= */}
 
       <div className="space-y-4">
         {options.map((item) => {
@@ -193,33 +252,90 @@ const PreferenceSettings = () => {
               whileHover={{
                 y: -2,
               }}
-              className="flex items-center justify-between gap-5 rounded-2xl border border-slate-200 p-5 transition hover:border-violet-200 hover:shadow-sm dark:border-slate-700 dark:hover:border-violet-500"
+              className="
+                flex
+                items-center
+                justify-between
+                gap-5
+
+                rounded-2xl
+                border
+                border-slate-200
+                p-5
+
+                transition
+
+                hover:border-violet-200
+                hover:shadow-sm
+
+                dark:border-slate-700
+                dark:hover:border-violet-500
+              "
             >
-              {/* LEFT */}
+              {/* LEFT SIDE */}
 
               <div className="flex items-center gap-4">
+                {/* ICON */}
+
                 <div
-                  className={`rounded-xl p-3 transition ${
-                    enabled
-                      ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400"
-                      : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                  }`}
+                  className={`
+                    rounded-xl
+                    p-3
+                    transition
+
+                    ${
+                      enabled
+                        ? `
+                          bg-violet-100
+                          text-violet-700
+
+                          dark:bg-violet-500/20
+                          dark:text-violet-400
+                        `
+                        : `
+                          bg-slate-100
+                          text-slate-500
+
+                          dark:bg-slate-800
+                          dark:text-slate-400
+                        `
+                    }
+                  `}
                 >
                   <Icon size={22} />
                 </div>
 
+                {/* TEXT */}
+
                 <div>
-                  <h3 className="font-semibold text-slate-800 dark:text-white">
+                  <h3
+                    className="
+                      font-semibold
+                      text-slate-800
+
+                      dark:text-white
+                    "
+                  >
                     {item.title}
                   </h3>
 
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  <p
+                    className="
+                      mt-1
+                      text-sm
+                      text-slate-500
+
+                      dark:text-slate-400
+                    "
+                  >
                     {item.description}
                   </p>
                 </div>
               </div>
 
-              {/* TOGGLE */}
+              {/* =================================================
+                  TOGGLE
+              ================================================= */}
 
               <button
                 type="button"
@@ -227,11 +343,25 @@ const PreferenceSettings = () => {
                 aria-checked={enabled}
                 aria-label={`Toggle ${item.title}`}
                 onClick={() => toggle(item.key)}
-                className={`relative h-7 w-14 shrink-0 cursor-pointer rounded-full transition-colors duration-300 ${
-                  enabled
-                    ? "bg-violet-600"
-                    : "bg-slate-300 dark:bg-slate-600"
-                }`}
+                className={`
+                  relative
+                  h-7
+                  w-14
+                  shrink-0
+
+                  cursor-pointer
+
+                  rounded-full
+
+                  transition-colors
+                  duration-300
+
+                  ${
+                    enabled
+                      ? "bg-violet-600"
+                      : "bg-slate-300 dark:bg-slate-600"
+                  }
+                `}
               >
                 <motion.span
                   animate={{
@@ -242,7 +372,19 @@ const PreferenceSettings = () => {
                     stiffness: 500,
                     damping: 30,
                   }}
-                  className="absolute left-0 top-1 h-5 w-5 rounded-full bg-white shadow"
+                  className="
+                    absolute
+                    left-0
+                    top-1
+
+                    h-5
+                    w-5
+
+                    rounded-full
+                    bg-white
+
+                    shadow
+                  "
                 />
               </button>
             </motion.div>
@@ -250,9 +392,18 @@ const PreferenceSettings = () => {
         })}
       </div>
 
-      {/* SAVE BUTTON */}
+      {/* =================================================
+          SAVE BUTTON
+      ================================================= */}
 
-      <div className="mt-8 flex items-center justify-end">
+      <div
+        className="
+          mt-8
+          flex
+          items-center
+          justify-end
+        "
+      >
         <motion.button
           type="button"
           whileHover={{
@@ -263,11 +414,47 @@ const PreferenceSettings = () => {
           }}
           onClick={handleSave}
           disabled={saving}
-          className={`flex cursor-pointer items-center gap-2 rounded-xl px-6 py-3 font-semibold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-60 ${
-            saved
-              ? "bg-emerald-500 shadow-emerald-100"
-              : "bg-gradient-to-r from-violet-600 to-purple-600 shadow-violet-200 hover:shadow-xl"
-          }`}
+          className={`
+            flex
+            cursor-pointer
+            items-center
+            gap-2
+
+            rounded-xl
+
+            px-6
+            py-3
+
+            font-semibold
+            text-white
+
+            shadow-lg
+            transition
+
+            disabled:cursor-not-allowed
+            disabled:opacity-60
+
+            ${
+              saved
+                ? `
+                  bg-emerald-500
+                  shadow-emerald-100
+
+                  dark:shadow-emerald-950/30
+                `
+                : `
+                  bg-gradient-to-r
+                  from-violet-600
+                  to-purple-600
+
+                  shadow-violet-200
+
+                  hover:shadow-xl
+
+                  dark:shadow-violet-950/30
+                `
+            }
+          `}
         >
           {saving ? (
             <>
@@ -275,11 +462,13 @@ const PreferenceSettings = () => {
                 size={18}
                 className="animate-spin"
               />
+
               Saving...
             </>
           ) : saved ? (
             <>
               <Check size={18} />
+
               Saved
             </>
           ) : (

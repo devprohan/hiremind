@@ -5,42 +5,105 @@ export default function Header({ resume }) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-between mb-8">
+    <div className="mb-8 flex items-center justify-between">
+
+      {/* =========================
+          LEFT CONTENT
+      ========================= */}
+
       <div>
+        {/* Back Button */}
+
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-500 hover:text-purple-600 mb-4 transition"
+          className="
+            mb-4
+            flex
+            cursor-pointer
+            items-center
+            gap-2
+            text-gray-500
+            transition
+            hover:text-purple-600
+
+            dark:text-slate-400
+            dark:hover:text-violet-400
+          "
         >
           <ArrowLeft size={18} />
+
           Back
         </button>
 
-        <h1 className="text-3xl font-bold text-gray-900">
+        {/* Resume Name */}
+
+        <h1
+          className="
+            text-3xl
+            font-bold
+            text-gray-900
+
+            dark:text-white
+          "
+        >
           {resume?.originalName || "Resume.pdf"}
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        {/* Date */}
+
+        <p
+          className="
+            mt-2
+            text-gray-500
+
+            dark:text-slate-400
+          "
+        >
           Analyzed on{" "}
           {resume?.createdAt
-            ? new Date(resume.createdAt).toLocaleDateString()
+            ? new Date(
+                resume.createdAt
+              ).toLocaleDateString()
             : "--"}
         </p>
       </div>
 
+      {/* =========================
+          DOWNLOAD BUTTON
+      ========================= */}
+
       <button
-        className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl shadow transition"
+        className="
+          flex
+          cursor-pointer
+          items-center
+          gap-2
+          rounded-xl
+          bg-purple-600
+          px-5
+          py-3
+          text-white
+          shadow
+          transition
+          hover:bg-purple-700
+        "
         onClick={() => {
           if (!resume?.resumeUrl) {
             alert("Resume file not available.");
             return;
           }
 
-          window.open(resume.resumeUrl, "_blank");
+          window.open(
+            resume.resumeUrl,
+            "_blank"
+          );
         }}
       >
         <Download size={18} />
+
         Download Resume
       </button>
+
     </div>
   );
 }

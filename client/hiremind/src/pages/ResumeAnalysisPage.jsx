@@ -22,11 +22,15 @@ export default function ResumeAnalysisPage() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [error, setError] = useState("");
 
+  // =========================
   // Fetch Resume
+  // =========================
+
   useEffect(() => {
     const fetchResume = async () => {
       try {
         const { resume } = await getResumeById(id);
+
         console.log("Resume:", resume);
 
         setResume(resume);
@@ -39,21 +43,30 @@ export default function ResumeAnalysisPage() {
     fetchResume();
   }, [id]);
 
+  // =========================
   // Fetch Preferences
+  // =========================
+
   useEffect(() => {
     const loadPreferences = async () => {
       try {
         const data = await getPreferences();
 
-        console.log("Preferences:", data.preferences);
+        console.log(
+          "Preferences:",
+          data.preferences
+        );
 
         if (data.success) {
           setPreferences(data.preferences);
         }
       } catch (error) {
-        console.error("Failed to load preferences:", error);
+        console.error(
+          "Failed to load preferences:",
+          error
+        );
 
-        // Default behavior if preferences fail to load
+        // Default behavior
         setPreferences({
           aiSuggestions: true,
         });
@@ -63,23 +76,61 @@ export default function ResumeAnalysisPage() {
     loadPreferences();
   }, []);
 
+  // =========================
   // Error
+  // =========================
+
   if (error) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-red-500">{error}</p>
+      <div
+        className="
+          flex
+          min-h-[400px]
+          items-center
+          justify-center
+        "
+      >
+        <p
+          className="
+            text-red-500
+            dark:text-red-400
+          "
+        >
+          {error}
+        </p>
       </div>
     );
   }
 
+  // =========================
   // Loading
+  // =========================
+
   if (!resume || !preferences) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-slate-500">Loading Resume...</p>
+      <div
+        className="
+          flex
+          min-h-[400px]
+          items-center
+          justify-center
+        "
+      >
+        <p
+          className="
+            text-slate-500
+            dark:text-slate-400
+          "
+        >
+          Loading Resume...
+        </p>
       </div>
     );
   }
+
+  // =========================
+  // Score Breakdown
+  // =========================
 
   const breakdown = [
     {
@@ -101,44 +152,79 @@ export default function ResumeAnalysisPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div
+      className="
+        space-y-8
+        text-slate-900
+        dark:text-slate-100
+      "
+    >
+
+      {/* =========================
+          HEADER
+      ========================= */}
 
       <Header resume={resume} />
+
+      {/* =========================
+          TABS
+      ========================= */}
 
       <Tabs
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
 
-      {/* Overview */}
+      {/* =========================
+          OVERVIEW
+      ========================= */}
+
       {activeTab === "Overview" && (
         <>
           <div className="grid gap-8 lg:grid-cols-2">
-            <ATSScoreCard score={resume.atsScore} />
+
+            <ATSScoreCard
+              score={resume.atsScore}
+            />
 
             <ScoreBreakdown
               breakdown={breakdown}
             />
+
           </div>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-2">
+
             <StrengthsCard
-              strengths={resume.strengths || []}
+              strengths={
+                resume.strengths || []
+              }
             />
 
             <WeaknessCard
-              weaknesses={resume.weaknesses || []}
+              weaknesses={
+                resume.weaknesses || []
+              }
             />
+
           </div>
         </>
       )}
 
-      {/* Skills */}
+      {/* =========================
+          SKILLS
+      ========================= */}
+
       {activeTab === "Skills" && (
-        <SkillsTab resume={resume} />
+        <SkillsTab
+          resume={resume}
+        />
       )}
 
-      {/* AI Suggestions */}
+      {/* =========================
+          AI SUGGESTIONS
+      ========================= */}
+
       {activeTab === "Suggestions" && (
         <SuggestionsCard
           resume={resume}
@@ -148,9 +234,14 @@ export default function ResumeAnalysisPage() {
         />
       )}
 
-      {/* Feedback */}
+      {/* =========================
+          FEEDBACK
+      ========================= */}
+
       {activeTab === "Feedback" && (
-        <FeedbackTab resume={resume} />
+        <FeedbackTab
+          resume={resume}
+        />
       )}
 
     </div>

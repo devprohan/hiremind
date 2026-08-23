@@ -47,95 +47,277 @@ export default function SkillGapCard() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl bg-white p-6 shadow-lg"
+      className="
+        rounded-3xl
+        border border-slate-200
+        bg-white
+        p-6
+        shadow-lg
+
+        dark:border-slate-700
+        dark:bg-slate-900
+      "
     >
-      {/* Header */}
+      {/* =========================
+          HEADER
+      ========================= */}
+
       <div className="mb-5 flex items-center justify-between">
+
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100">
+
+          <div
+            className="
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-xl
+              bg-violet-100
+
+              dark:bg-violet-500/15
+            "
+          >
             <Lightbulb
               size={22}
-              className="text-violet-600"
+              className="
+                text-violet-600
+                dark:text-violet-400
+              "
             />
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-slate-800">
+
+            <h2
+              className="
+                text-xl
+                font-bold
+                text-slate-800
+
+                dark:text-white
+              "
+            >
               Skill Gap Analysis
             </h2>
 
-            <p className="text-sm text-slate-500">
+            <p
+              className="
+                text-sm
+                text-slate-500
+
+                dark:text-slate-400
+              "
+            >
               Skills recommended to improve your ATS score
             </p>
+
           </div>
         </div>
 
-        {/* Count */}
+        {/* =========================
+            COUNT
+        ========================= */}
+
         {!loading && missingSkills.length > 0 && (
-          <div className="rounded-full bg-orange-50 px-3 py-1.5 text-sm font-semibold text-orange-600">
+          <div
+            className="
+              rounded-full
+              bg-orange-50
+              px-3
+              py-1.5
+              text-sm
+              font-semibold
+              text-orange-600
+
+              dark:bg-orange-500/15
+              dark:text-orange-400
+            "
+          >
             {missingSkills.length} skills
           </div>
         )}
+
       </div>
 
-      {/* Loading */}
+      {/* =========================
+          LOADING
+      ========================= */}
+
       {loading && (
-        <div className="flex items-center justify-center py-8 text-sm text-slate-500">
+        <div
+          className="
+            flex
+            items-center
+            justify-center
+            py-8
+            text-sm
+            text-slate-500
+
+            dark:text-slate-400
+          "
+        >
           <LoaderCircle
             size={20}
-            className="mr-2 animate-spin"
+            className="
+              mr-2
+              animate-spin
+              text-violet-600
+              dark:text-violet-400
+            "
           />
+
           Loading skills...
         </div>
       )}
 
-      {/* No skills */}
+      {/* =========================
+          NO SKILLS
+      ========================= */}
+
       {!loading && missingSkills.length === 0 && (
-        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 text-center">
+        <div
+          className="
+            rounded-2xl
+            border
+            border-emerald-100
+            bg-emerald-50
+            p-5
+            text-center
+
+            dark:border-emerald-900/60
+            dark:bg-emerald-500/10
+          "
+        >
           <CheckCircle2
             size={30}
-            className="mx-auto mb-2 text-emerald-500"
+            className="
+              mx-auto
+              mb-2
+              text-emerald-500
+
+              dark:text-emerald-400
+            "
           />
 
-          <p className="font-semibold text-slate-700">
+          <p
+            className="
+              font-semibold
+              text-slate-700
+
+              dark:text-slate-200
+            "
+          >
             No skill gaps yet
           </p>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Upload and analyze your resume to get skill recommendations.
+          <p
+            className="
+              mt-1
+              text-sm
+              text-slate-500
+
+              dark:text-slate-400
+            "
+          >
+            Upload and analyze your resume to get skill
+            recommendations.
           </p>
         </div>
       )}
 
-      {/* Skills */}
+      {/* =========================
+          SKILLS
+      ========================= */}
+
       {!loading && missingSkills.length > 0 && (
         <>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          <div
+            className="
+              grid
+              grid-cols-2
+              gap-3
+              md:grid-cols-3
+              lg:grid-cols-4
+            "
+          >
             {visibleSkills.map((skill, index) => (
               <motion.div
                 key={`${skill}-${index}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.03 }}
-                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5"
+                initial={{
+                  opacity: 0,
+                  scale: 0.95,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+                transition={{
+                  delay: index * 0.03,
+                }}
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  rounded-xl
+                  border
+                  border-slate-200
+                  bg-slate-50
+                  px-3
+                  py-2.5
+
+                  dark:border-slate-700
+                  dark:bg-slate-800
+                "
               >
                 <AlertTriangle
                   size={15}
-                  className="shrink-0 text-orange-500"
+                  className="
+                    shrink-0
+                    text-orange-500
+                    dark:text-orange-400
+                  "
                 />
 
-                <span className="truncate text-sm font-medium text-slate-700">
+                <span
+                  className="
+                    truncate
+                    text-sm
+                    font-medium
+                    text-slate-700
+
+                    dark:text-slate-200
+                  "
+                >
                   {skill}
                 </span>
               </motion.div>
             ))}
           </div>
 
-          {/* Show More / Less */}
+          {/* =========================
+              SHOW MORE / LESS
+          ========================= */}
+
           {missingSkills.length > 8 && (
             <button
               onClick={() => setShowAll(!showAll)}
-              className="mx-auto mt-4 flex items-center gap-1.5 text-sm font-semibold text-violet-600 transition hover:text-violet-700"
+              className="
+                mx-auto
+                mt-4
+                flex
+                items-center
+                gap-1.5
+                text-sm
+                font-semibold
+                text-violet-600
+                transition
+                hover:text-violet-700
+
+                dark:text-violet-400
+                dark:hover:text-violet-300
+              "
             >
               {showAll ? (
                 <>

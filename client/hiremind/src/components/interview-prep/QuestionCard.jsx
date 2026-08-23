@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
 import AnswerInput from "./AnswerInput";
-import { ArrowLeft, ArrowRight, Send, MessageSquareText } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Send,
+  MessageSquareText,
+} from "lucide-react";
 
 const QuestionCard = ({
   question,
@@ -18,77 +23,172 @@ const QuestionCard = ({
       key={currentIndex}
       initial={{ opacity: 0, x: 25 }}
       animate={{ opacity: 1, x: 0 }}
-      className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+      className="
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-7
+        shadow-sm
+
+        dark:border-slate-700
+        dark:bg-slate-900
+      "
     >
+      {/* Question Header */}
+
       <div className="flex items-start gap-4">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+
+        <div
+          className="
+            flex
+            h-11
+            w-11
+            shrink-0
+            items-center
+            justify-center
+            rounded-xl
+            bg-violet-100
+            text-violet-600
+
+            dark:bg-violet-500/15
+            dark:text-violet-400
+          "
+        >
           <MessageSquareText size={21} />
         </div>
 
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-violet-600">
+
+          <span
+            className="
+              text-xs
+              font-bold
+              uppercase
+              tracking-wider
+              text-violet-600
+
+              dark:text-violet-400
+            "
+          >
             Question {currentIndex + 1}
           </span>
 
-          <h2 className="mt-2 text-xl font-semibold leading-8 text-slate-800">
+          <h2
+            className="
+              mt-2
+              text-xl
+              font-semibold
+              leading-8
+              text-slate-800
+
+              dark:text-slate-100
+            "
+          >
             {question?.question || question}
           </h2>
+
         </div>
       </div>
 
-      <AnswerInput value={answer} onChange={onAnswerChange} />
+      {/* Answer */}
+
+      <AnswerInput
+        value={answer}
+        onChange={onAnswerChange}
+      />
+
+      {/* Navigation */}
 
       <div className="mt-6 flex items-center justify-between">
+
+        {/* Previous */}
+
         <button
           onClick={onPrevious}
           disabled={currentIndex === 0}
           className="
-            flex cursor-pointer items-center gap-2
-            rounded-xl border border-slate-200
-            px-5 py-3
-            font-medium text-slate-600
-            transition hover:bg-slate-50
+            flex
+            cursor-pointer
+            items-center
+            gap-2
+            rounded-xl
+            border
+            border-slate-200
+            px-5
+            py-3
+            font-medium
+            text-slate-600
+            transition
+
+            hover:bg-slate-50
+
             disabled:cursor-not-allowed
             disabled:opacity-40
+
+            dark:border-slate-700
+            dark:text-slate-300
+            dark:hover:bg-slate-800
           "
         >
           <ArrowLeft size={18} />
           Previous
         </button>
 
+        {/* Submit / Next */}
+
         {currentIndex === total - 1 ? (
           <button
             onClick={onSubmit}
             disabled={submitting}
             className="
-              flex cursor-pointer items-center gap-2
-              rounded-xl bg-violet-600
-              px-5 py-3
-              font-semibold text-white
-              transition hover:bg-violet-700
+              flex
+              cursor-pointer
+              items-center
+              gap-2
+              rounded-xl
+              bg-violet-600
+              px-5
+              py-3
+              font-semibold
+              text-white
+              transition
+
+              hover:bg-violet-700
+
               disabled:cursor-not-allowed
               disabled:opacity-50
             "
           >
             <Send size={18} />
 
-            {submitting ? "Evaluating..." : "Submit Interview"}
+            {submitting
+              ? "Evaluating..."
+              : "Submit Interview"}
           </button>
         ) : (
           <button
             onClick={onNext}
             className="
-              flex cursor-pointer items-center gap-2
-              rounded-xl bg-violet-600
-              px-5 py-3
-              font-semibold text-white
-              transition hover:bg-violet-700
+              flex
+              cursor-pointer
+              items-center
+              gap-2
+              rounded-xl
+              bg-violet-600
+              px-5
+              py-3
+              font-semibold
+              text-white
+              transition
+              hover:bg-violet-700
             "
           >
             Next
             <ArrowRight size={18} />
           </button>
         )}
+
       </div>
     </motion.div>
   );

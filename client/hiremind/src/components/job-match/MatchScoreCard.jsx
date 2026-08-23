@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Target,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
 
@@ -47,7 +46,8 @@ const MatchScoreCard = ({ result }) => {
         title: "Excellent Match",
         description:
           "Your resume strongly matches the requirements for this position.",
-        badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        badge:
+          "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30",
       };
     }
 
@@ -56,7 +56,8 @@ const MatchScoreCard = ({ result }) => {
         title: "Good Match",
         description:
           "Your resume matches many of the requirements for this position.",
-        badge: "bg-blue-50 text-blue-700 border-blue-200",
+        badge:
+          "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/30",
       };
     }
 
@@ -65,7 +66,8 @@ const MatchScoreCard = ({ result }) => {
         title: "Average Match",
         description:
           "Your resume matches some requirements but has room for improvement.",
-        badge: "bg-amber-50 text-amber-700 border-amber-200",
+        badge:
+          "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30",
       };
     }
 
@@ -73,7 +75,8 @@ const MatchScoreCard = ({ result }) => {
       title: "Low Match",
       description:
         "Your resume needs improvement to better match this position.",
-      badge: "bg-red-50 text-red-700 border-red-200",
+      badge:
+        "bg-red-50 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/30",
     };
   };
 
@@ -81,7 +84,8 @@ const MatchScoreCard = ({ result }) => {
 
   const radius = 74;
   const circumference = 2 * Math.PI * radius;
-  const progress = circumference - (score / 100) * circumference;
+  const progress =
+    circumference - (score / 100) * circumference;
 
   return (
     <motion.div
@@ -100,21 +104,44 @@ const MatchScoreCard = ({ result }) => {
         duration: 0.5,
       }}
       className="
-        relative overflow-hidden
+        relative
+        overflow-hidden
         rounded-3xl
-        border border-slate-200
+        border
+        border-slate-200
         bg-white
         p-7
         shadow-sm
+
+        dark:border-slate-700
+        dark:bg-slate-900
       "
     >
       {/* Background decoration */}
-      <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-violet-100/50 blur-3xl" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -right-20
+          -top-20
+          h-56
+          w-56
+          rounded-full
+          bg-violet-100/50
+          blur-3xl
+
+          dark:bg-violet-500/10
+        "
+      />
 
       <div className="relative z-10">
-        {/* Header */}
+
+        {/* =========================
+            HEADER
+        ========================= */}
 
         <div className="flex items-center gap-3">
+
           <motion.div
             initial={{
               scale: 0,
@@ -130,28 +157,53 @@ const MatchScoreCard = ({ result }) => {
               stiffness: 180,
             }}
             className="
-              flex h-12 w-12
-              items-center justify-center
+              flex
+              h-12
+              w-12
+              items-center
+              justify-center
               rounded-xl
               bg-violet-100
               text-violet-600
+
+              dark:bg-violet-500/15
+              dark:text-violet-400
             "
           >
             <Target size={23} />
           </motion.div>
 
           <div>
-            <h2 className="text-xl font-bold text-slate-800">
+
+            <h2
+              className="
+                text-xl
+                font-bold
+                text-slate-800
+
+                dark:text-slate-100
+              "
+            >
               Job Match Score
             </h2>
 
-            <p className="text-sm text-slate-500">
+            <p
+              className="
+                text-sm
+                text-slate-500
+
+                dark:text-slate-400
+              "
+            >
               Resume compatibility with this job
             </p>
+
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* =========================
+            MAIN CONTENT
+        ========================= */}
 
         <div className="mt-8 flex flex-col items-center">
 
@@ -172,10 +224,12 @@ const MatchScoreCard = ({ result }) => {
             }}
             className="relative h-48 w-48"
           >
+
             <svg
               viewBox="0 0 180 180"
               className="-rotate-90 h-full w-full"
             >
+
               {/* Background Circle */}
 
               <circle
@@ -185,6 +239,7 @@ const MatchScoreCard = ({ result }) => {
                 fill="none"
                 stroke="#ede9fe"
                 strokeWidth="13"
+                className="dark:opacity-20"
               />
 
               {/* Animated Progress Circle */}
@@ -237,11 +292,13 @@ const MatchScoreCard = ({ result }) => {
                   />
                 </linearGradient>
               </defs>
+
             </svg>
 
             {/* Score */}
 
             <div className="absolute inset-0 flex flex-col items-center justify-center">
+
               <motion.div
                 initial={{
                   opacity: 0,
@@ -256,26 +313,53 @@ const MatchScoreCard = ({ result }) => {
                   duration: 0.4,
                 }}
               >
-                <span className="text-5xl font-bold tracking-tight text-violet-600">
+
+                <span
+                  className="
+                    text-5xl
+                    font-bold
+                    tracking-tight
+                    text-violet-600
+
+                    dark:text-violet-400
+                  "
+                >
                   {displayScore}
                 </span>
 
-                <span className="text-2xl font-bold text-violet-500">
+                <span
+                  className="
+                    text-2xl
+                    font-bold
+                    text-violet-500
+
+                    dark:text-violet-400
+                  "
+                >
                   %
                 </span>
+
               </motion.div>
 
-              <span className="mt-1 text-sm font-medium text-slate-500">
+              <span
+                className="
+                  mt-1
+                  text-sm
+                  font-medium
+                  text-slate-500
+
+                  dark:text-slate-400
+                "
+              >
                 Match Score
               </span>
+
             </div>
-
-            {/* Sparkle */}
-
-           
           </motion.div>
 
-          {/* Status */}
+          {/* =========================
+              STATUS
+          ========================= */}
 
           <motion.div
             initial={{
@@ -291,10 +375,15 @@ const MatchScoreCard = ({ result }) => {
             }}
             className={`
               mt-5
-              flex items-center gap-2
-              rounded-full border
-              px-4 py-2
-              text-sm font-semibold
+              flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              px-4
+              py-2
+              text-sm
+              font-semibold
               ${status.badge}
             `}
           >
@@ -303,7 +392,9 @@ const MatchScoreCard = ({ result }) => {
             {status.title}
           </motion.div>
 
-          {/* Description */}
+          {/* =========================
+              DESCRIPTION
+          ========================= */}
 
           <motion.p
             initial={{
@@ -324,12 +415,16 @@ const MatchScoreCard = ({ result }) => {
               text-sm
               leading-6
               text-slate-500
+
+              dark:text-slate-400
             "
           >
             {status.description}
           </motion.p>
 
-          {/* Bottom Progress */}
+          {/* =========================
+              BOTTOM PROGRESS
+          ========================= */}
 
           <motion.div
             initial={{
@@ -343,15 +438,45 @@ const MatchScoreCard = ({ result }) => {
             }}
             className="mt-6 w-full max-w-lg"
           >
-            <div className="mb-2 flex justify-between text-xs font-medium text-slate-500">
-              <span>Match Strength</span>
 
-              <span className="font-semibold text-violet-600">
+            <div
+              className="
+                mb-2
+                flex
+                justify-between
+                text-xs
+                font-medium
+                text-slate-500
+
+                dark:text-slate-400
+              "
+            >
+              <span>
+                Match Strength
+              </span>
+
+              <span
+                className="
+                  font-semibold
+                  text-violet-600
+
+                  dark:text-violet-400
+                "
+              >
                 {score}%
               </span>
             </div>
 
-            <div className="h-2 overflow-hidden rounded-full bg-violet-100">
+            <div
+              className="
+                h-2
+                overflow-hidden
+                rounded-full
+                bg-violet-100
+
+                dark:bg-violet-500/15
+              "
+            >
               <motion.div
                 initial={{
                   width: 0,
@@ -374,6 +499,7 @@ const MatchScoreCard = ({ result }) => {
                 "
               />
             </div>
+
           </motion.div>
         </div>
       </div>

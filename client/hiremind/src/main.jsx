@@ -5,20 +5,9 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 
+import { initializeTheme } from "./utils/theme";
 
-try {
-  const savedPreferences = JSON.parse(
-    localStorage.getItem("preferences") || "{}"
-  );
-
-  if (savedPreferences.darkMode === true) {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-  }
-} catch (error) {
-  console.error("Failed to load preferences:", error);
-}
+initializeTheme();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

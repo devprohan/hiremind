@@ -29,7 +29,6 @@ const DashboardPage = () => {
   const [stats, setStats] = useState({});
   const [recentResumes, setRecentResumes] = useState([]);
 
-  // Dynamic skills
   const [topSkills, setTopSkills] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
 
@@ -60,15 +59,12 @@ const DashboardPage = () => {
       console.log("RECENT:", recentRes);
       console.log("SKILLS:", skillsRes);
 
-      // Stats
       setStats(statsRes?.stats || {});
 
-      // Recent resumes
       setRecentResumes(
         recentRes?.recentResumes || []
       );
 
-      // Skills
       setTopSkills(
         Array.isArray(skillsRes?.topSkills)
           ? skillsRes.topSkills
@@ -80,7 +76,6 @@ const DashboardPage = () => {
           ? skillsRes.missingSkills
           : []
       );
-
     } catch (err) {
       console.error(
         "Dashboard Error:",
@@ -92,12 +87,10 @@ const DashboardPage = () => {
           "Unable to load dashboard"
       );
 
-      // Safe empty state
       setStats({});
       setRecentResumes([]);
       setTopSkills([]);
       setMissingSkills([]);
-
     } finally {
       setLoading(false);
     }
@@ -109,14 +102,28 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[75vh] items-center justify-center">
+      <div
+        className="
+          flex min-h-[75vh]
+          items-center justify-center
+          bg-slate-50
+          dark:bg-slate-950
+        "
+      >
         <div className="text-center">
           <LoaderCircle
             size={45}
-            className="mx-auto animate-spin text-violet-600"
+            className="mx-auto animate-spin text-violet-600 dark:text-violet-400"
           />
 
-          <p className="mt-4 font-medium text-slate-500">
+          <p
+            className="
+              mt-4
+              font-medium
+              text-slate-500
+              dark:text-slate-400
+            "
+          >
             Loading dashboard...
           </p>
         </div>
@@ -130,15 +137,58 @@ const DashboardPage = () => {
 
   if (error) {
     return (
-      <div className="flex min-h-[75vh] items-center justify-center">
-        <div className="max-w-md rounded-3xl border border-red-100 bg-white p-8 text-center shadow-sm">
-          <p className="font-semibold text-red-500">
+      <div
+        className="
+          flex min-h-[75vh]
+          items-center justify-center
+          bg-slate-50
+          px-4
+          dark:bg-slate-950
+        "
+      >
+        <div
+          className="
+            max-w-md
+            rounded-3xl
+            border
+            border-red-100
+            bg-white
+            p-8
+            text-center
+            shadow-sm
+
+            dark:border-red-900/50
+            dark:bg-slate-900
+          "
+        >
+          <p
+            className="
+              font-semibold
+              text-red-500
+              dark:text-red-400
+            "
+          >
             {error}
           </p>
 
           <button
             onClick={fetchDashboard}
-            className="mt-5 flex cursor-pointer items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-semibold text-white"
+            className="
+              mt-5
+              flex
+              cursor-pointer
+              items-center
+              gap-2
+              rounded-xl
+              bg-violet-600
+              px-5
+              py-3
+              font-semibold
+              text-white
+              transition
+
+              hover:bg-violet-700
+            "
           >
             <RefreshCcw size={17} />
             Try Again
@@ -158,31 +208,32 @@ const DashboardPage = () => {
       value: stats?.totalResumes ?? 0,
       subtitle: "Uploaded resumes",
       icon: FileText,
-      iconBox: "bg-violet-100 text-violet-600",
+      iconBox:
+        "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
     },
-
     {
       title: "Highest ATS",
       value: stats?.highestATS ?? 0,
       subtitle: "Best ATS score",
       icon: Target,
-      iconBox: "bg-emerald-100 text-emerald-600",
+      iconBox:
+        "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
     },
-
     {
       title: "Average ATS",
       value: stats?.averageATS ?? 0,
       subtitle: "Average performance",
       icon: BarChart3,
-      iconBox: "bg-blue-100 text-blue-600",
+      iconBox:
+        "bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400",
     },
-
     {
       title: "Completed",
       value: stats?.completedAnalysis ?? 0,
       subtitle: "Completed analyses",
       icon: CheckCircle2,
-      iconBox: "bg-pink-100 text-pink-600",
+      iconBox:
+        "bg-pink-100 text-pink-600 dark:bg-pink-500/15 dark:text-pink-400",
     },
   ];
 
@@ -235,25 +286,83 @@ const DashboardPage = () => {
     }));
 
   return (
-    <div className="min-h-screen bg-[#fafaff] p-2 md:p-4">
+    <div
+      className="
+        min-h-screen
+        bg-slate-50
+        p-2
 
+        transition-colors
+        duration-300
+
+        dark:bg-slate-950
+
+        md:p-4
+      "
+    >
       {/* ===================================
           HEADER
       =================================== */}
 
-      <section className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
+      <section
+        className="
+          flex
+          flex-col
+          justify-between
+          gap-5
+
+          md:flex-row
+          md:items-center
+        "
+      >
         <div>
-          <h1 className="text-3xl font-black text-slate-900 md:text-4xl">
+          <h1
+            className="
+              text-4xl font-black text-slate-900 dark:text-white
+            "
+          >
             Dashboard
           </h1>
 
-          <p className="mt-2 text-slate-500">
+          <p
+            className="
+              mt-2
+              text-slate-500
+
+              dark:text-slate-500
+            "
+          >
             Track your resume performance and improve
             your chances of getting hired.
           </p>
         </div>
 
-        <div className="flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 shadow-sm">
+        <div
+          className="
+            flex
+            w-fit
+            items-center
+            gap-2
+
+            rounded-xl
+            border
+            border-slate-200
+            bg-white
+
+            px-4
+            py-3
+
+            text-sm
+            font-semibold
+            text-slate-600
+
+            shadow-sm
+
+            dark:border-slate-700
+            dark:bg-slate-900
+            dark:text-slate-400
+          "
+        >
           <CalendarDays size={17} />
 
           {new Date().toLocaleDateString(
@@ -271,7 +380,15 @@ const DashboardPage = () => {
           STAT CARDS
       =================================== */}
 
-      <section className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <section
+        className="
+          mt-8
+          grid
+          gap-5
+          sm:grid-cols-2
+          xl:grid-cols-4
+        "
+      >
         {statCards.map((card, index) => {
           const Icon = card.icon;
 
@@ -292,23 +409,70 @@ const DashboardPage = () => {
               whileHover={{
                 y: -5,
               }}
-              className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+              className="
+                rounded-3xl
+                border
+                border-slate-100
+                bg-white
+
+                p-6
+
+                shadow-[0_8px_30px_rgba(80,70,140,0.06)]
+
+                dark:border-slate-800
+                dark:bg-slate-900
+              "
             >
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBox}`}
+                className={`
+                  flex
+                  h-12
+                  w-12
+                  items-center
+                  justify-center
+                  rounded-2xl
+
+                  ${card.iconBox}
+                `}
               >
                 <Icon size={23} />
               </div>
 
-              <p className="mt-5 text-sm font-semibold text-slate-500">
+              <p
+                className="
+                  mt-5
+                  text-sm
+                  font-semibold
+                  text-slate-500
+
+                  dark:text-slate-400
+                "
+              >
                 {card.title}
               </p>
 
-              <h2 className="mt-1 text-4xl font-black text-slate-900">
+              <h2
+                className="
+                  mt-1
+                  text-4xl
+                  font-black
+                  text-slate-900
+
+                  dark:text-slate-900
+                "
+              >
                 {card.value}
               </h2>
 
-              <p className="mt-2 text-xs text-slate-400">
+              <p
+                className="
+                  mt-2
+                  text-xs
+                  text-slate-400
+
+                  dark:text-slate-400
+                "
+              >
                 {card.subtitle}
               </p>
             </motion.div>
@@ -320,8 +484,14 @@ const DashboardPage = () => {
           MAIN ANALYTICS
       =================================== */}
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_1fr]">
-
+      <section
+        className="
+          mt-6
+          grid
+          gap-6
+          xl:grid-cols-[1.25fr_1fr]
+        "
+      >
         {/* ATS TREND */}
 
         <motion.div
@@ -333,20 +503,57 @@ const DashboardPage = () => {
             opacity: 1,
             y: 0,
           }}
-          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+          className="
+            rounded-3xl
+            border
+            border-slate-100
+            bg-white
+            p-7
+
+            shadow-[0_8px_30px_rgba(80,70,140,0.06)]
+
+            dark:border-slate-800
+            dark:bg-slate-900
+          "
         >
           <div>
-            <h2 className="text-xl font-black text-slate-900">
+            <h2
+              className="
+                text-xl
+                font-black
+                text-slate-900
+
+                dark:text-slate-900
+              "
+            >
               ATS Score Trend
             </h2>
 
-            <p className="mt-1 text-sm text-slate-400">
+            <p
+              className="
+                mt-1
+                text-sm
+                text-slate-400
+
+                dark:text-slate-400
+              "
+            >
               Performance of your recent resumes
             </p>
           </div>
 
           {trendData.length > 0 ? (
-            <div className="mt-8 flex h-[270px] items-end gap-4 overflow-x-auto px-2">
+            <div
+              className="
+                mt-8
+                flex
+                h-[270px]
+                items-end
+                gap-4
+                overflow-x-auto
+                px-2
+              "
+            >
               {trendData.map(
                 (item, index) => {
                   const height = Math.max(
@@ -362,9 +569,25 @@ const DashboardPage = () => {
                       key={
                         item.id || index
                       }
-                      className="flex min-w-[70px] flex-1 flex-col items-center justify-end"
+                      className="
+                        flex
+                        min-w-[70px]
+                        flex-1
+                        flex-col
+                        items-center
+                        justify-end
+                      "
                     >
-                      <p className="mb-2 text-sm font-bold text-violet-600">
+                      <p
+                        className="
+                          mb-2
+                          text-sm
+                          font-bold
+                          text-violet-600
+
+                          dark:text-violet-400
+                        "
+                      >
                         {item.score}
                       </p>
 
@@ -380,10 +603,23 @@ const DashboardPage = () => {
                           delay:
                             index * 0.08,
                         }}
-                        className="w-10 rounded-t-xl bg-gradient-to-t from-violet-600 to-purple-400"
+                        className="
+                          w-10
+                          rounded-t-xl
+                          bg-gradient-to-t
+                          from-violet-600
+                          to-purple-400
+                        "
                       />
 
-                      <p className="mt-3 text-xs font-medium text-slate-400">
+                      <p
+                        className="
+                          mt-3
+                          text-xs
+                          font-medium
+                          text-slate-400
+                        "
+                      >
                         {item.date}
                       </p>
                     </div>
@@ -392,32 +628,86 @@ const DashboardPage = () => {
               )}
             </div>
           ) : (
-            <div className="flex h-[270px] items-center justify-center">
+            <div
+              className="
+                flex
+                h-[270px]
+                items-center
+                justify-center
+              "
+            >
               <div className="text-center">
                 <BarChart3
                   size={38}
-                  className="mx-auto text-slate-300"
+                  className="
+                    mx-auto
+                    text-slate-300
+
+                    dark:text-slate-600
+                  "
                 />
 
-                <p className="mt-3 text-sm text-slate-400">
+                <p
+                  className="
+                    mt-3
+                    text-sm
+                    text-slate-400
+                  "
+                >
                   No ATS history available.
                 </p>
               </div>
             </div>
           )}
 
-          <div className="mt-6 flex items-start gap-3 rounded-2xl bg-violet-50 p-5">
+          {/* INSIGHT */}
+
+          <div
+            className="
+              mt-6
+              flex
+              items-start
+              gap-3
+              rounded-2xl
+              bg-violet-50
+              p-5
+
+              dark:bg-violet-500/10
+            "
+          >
             <Sparkles
               size={20}
-              className="mt-0.5 shrink-0 text-violet-600"
+              className="
+                mt-0.5
+                shrink-0
+                text-violet-600
+
+                dark:text-violet-400
+              "
             />
 
             <div>
-              <p className="font-bold text-violet-700">
+              <p
+                className="
+                  font-bold
+                  text-violet-700
+
+                  dark:text-violet-400
+                "
+              >
                 Performance Insight
               </p>
 
-              <p className="mt-1 text-sm leading-6 text-slate-600">
+              <p
+                className="
+                  mt-1
+                  text-sm
+                  leading-6
+                  text-slate-600
+
+                  dark:text-slate-500
+                "
+              >
                 Analyze multiple versions of your
                 resume to track how your ATS score
                 improves over time.
@@ -426,8 +716,9 @@ const DashboardPage = () => {
           </div>
         </motion.div>
 
-
-        {/* LATEST ANALYSIS */}
+        {/* ===================================
+            LATEST ANALYSIS
+        =================================== */}
 
         <motion.div
           initial={{
@@ -441,31 +732,112 @@ const DashboardPage = () => {
           transition={{
             delay: 0.1,
           }}
-          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+          className="
+            rounded-3xl
+            border
+            border-slate-100
+            bg-white
+            p-7
+
+            shadow-[0_8px_30px_rgba(80,70,140,0.06)]
+
+            dark:border-slate-800
+            dark:bg-slate-900
+          "
         >
-          <h2 className="text-xl font-black text-slate-900">
+          <h2
+            className="
+              text-xl
+              font-black
+              text-slate-900
+
+              dark:text-slate-900
+            "
+          >
             Latest Resume Analysis
           </h2>
 
-          <p className="mt-1 text-sm text-slate-400">
+          <p
+            className="
+              mt-1
+              text-sm
+              text-slate-400
+            "
+          >
             Your most recently analyzed resume
           </p>
 
           {latestResume ? (
             <>
-              <div className="mt-6 flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-violet-50 to-purple-50 p-5">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-600 shadow-sm">
+              <div
+                className="
+                  mt-6
+                  flex
+                  items-center
+                  justify-between
+                  gap-4
+                  rounded-2xl
+
+                  bg-gradient-to-r
+                  from-violet-50
+                  to-purple-50
+
+                  p-5
+
+                  dark:from-violet-500/10
+                  dark:to-purple-500/10
+                "
+              >
+                <div
+                  className="
+                    flex
+                    min-w-0
+                    items-center
+                    gap-3
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      h-11
+                      w-11
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-xl
+
+                      bg-white
+                      text-violet-600
+                      shadow-sm
+
+                      dark:bg-slate-800
+                      dark:text-violet-400
+                    "
+                  >
                     <FileText size={21} />
                   </div>
 
                   <div className="min-w-0">
-                    <p className="truncate font-bold text-slate-800">
+                    <p
+                      className="
+                        truncate
+                        font-bold
+                        text-slate-800
+
+                        dark:text-slate-900
+                      "
+                    >
                       {latestResume.originalName ||
                         "Resume"}
                     </p>
 
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p
+                      className="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                      "
+                    >
                       {latestResume.createdAt
                         ? new Date(
                             latestResume.createdAt
@@ -475,6 +847,8 @@ const DashboardPage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* SCORE CIRCLE */}
 
               <div className="mt-8 flex justify-center">
                 <div className="relative h-44 w-44">
@@ -487,7 +861,8 @@ const DashboardPage = () => {
                       cy="72"
                       r={radius}
                       fill="none"
-                      stroke="#ede9fe"
+                      stroke="currentColor"
+                      className="text-violet-100 dark:text-violet-950"
                       strokeWidth="11"
                     />
 
@@ -496,7 +871,8 @@ const DashboardPage = () => {
                       cy="72"
                       r={radius}
                       fill="none"
-                      stroke="#7c3aed"
+                      stroke="currentColor"
+                      className="text-violet-600 dark:text-violet-400"
                       strokeWidth="11"
                       strokeLinecap="round"
                       strokeDasharray={
@@ -516,30 +892,88 @@ const DashboardPage = () => {
                     />
                   </svg>
 
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-black text-violet-600">
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      flex
+                      flex-col
+                      items-center
+                      justify-center
+                    "
+                  >
+                    <span
+                      className="
+                        text-4xl
+                        font-black
+                        text-violet-600
+
+                        dark:text-violet-400
+                      "
+                    >
                       {latestScore}
                     </span>
 
-                    <span className="mt-1 text-xs text-slate-400">
+                    <span
+                      className="
+                        mt-1
+                        text-xs
+                        text-slate-400
+                      "
+                    >
                       ATS Score
                     </span>
                   </div>
                 </div>
               </div>
 
+              {/* STATUS */}
+
               <div className="mt-5 flex justify-center">
                 {latestResume.status ===
                 "Completed" ? (
-                  <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-600">
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      rounded-full
+                      bg-emerald-50
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-emerald-600
+
+                      dark:bg-emerald-500/10
+                      dark:text-emerald-400
+                    "
+                  >
                     <CheckCircle2
                       size={17}
                     />
                     Completed
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-600">
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      rounded-full
+                      bg-orange-50
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-orange-600
+
+                      dark:bg-orange-500/10
+                      dark:text-orange-400
+                    "
+                  >
                     <Clock3 size={17} />
+
                     {latestResume.status ||
                       "Processing"}
                   </div>
@@ -547,14 +981,32 @@ const DashboardPage = () => {
               </div>
             </>
           ) : (
-            <div className="flex h-[300px] items-center justify-center">
+            <div
+              className="
+                flex
+                h-[300px]
+                items-center
+                justify-center
+              "
+            >
               <div className="text-center">
                 <FileText
                   size={42}
-                  className="mx-auto text-slate-300"
+                  className="
+                    mx-auto
+                    text-slate-300
+
+                    dark:text-slate-600
+                  "
                 />
 
-                <p className="mt-3 text-sm text-slate-400">
+                <p
+                  className="
+                    mt-3
+                    text-sm
+                    text-slate-400
+                  "
+                >
                   No resume analyzed yet.
                 </p>
               </div>
@@ -563,13 +1015,18 @@ const DashboardPage = () => {
         </motion.div>
       </section>
 
-
       {/* ===================================
           SKILLS
       =================================== */}
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-2">
-
+      <section
+        className="
+          mt-6
+          grid
+          gap-6
+          lg:grid-cols-2
+        "
+      >
         {/* SKILLS FOUND */}
 
         <motion.div
@@ -581,19 +1038,58 @@ const DashboardPage = () => {
             opacity: 1,
             y: 0,
           }}
-          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+          className="
+            rounded-3xl
+            border
+            border-slate-100
+            bg-white
+            p-7
+
+            shadow-[0_8px_30px_rgba(80,70,140,0.06)]
+
+            dark:border-slate-800
+            dark:bg-slate-900
+          "
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+            <div
+              className="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-xl
+
+                bg-emerald-100
+                text-emerald-600
+
+                dark:bg-emerald-500/15
+                dark:text-emerald-400
+              "
+            >
               <BadgeCheck size={22} />
             </div>
 
             <div>
-              <h2 className="text-xl font-black text-slate-900">
+              <h2
+                className="
+                  text-xl
+                  font-black
+                  text-slate-900
+
+                  dark:text-slate-900
+                "
+              >
                 Skills Found
               </h2>
 
-              <p className="text-sm text-slate-400">
+              <p
+                className="
+                  text-sm
+                  text-slate-400
+                "
+              >
                 Detected across your resumes
               </p>
             </div>
@@ -605,7 +1101,21 @@ const DashboardPage = () => {
                 (skill, index) => (
                   <span
                     key={`${skill}-${index}`}
-                    className="rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700"
+                    className="
+                      rounded-full
+                      border
+                      border-emerald-100
+                      bg-emerald-50
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-emerald-700
+
+                      dark:border-emerald-500/20
+                      dark:bg-emerald-500/10
+                      dark:text-emerald-400
+                    "
                   >
                     {skill}
                   </span>
@@ -613,24 +1123,57 @@ const DashboardPage = () => {
               )}
             </div>
           ) : (
-            <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+            <div
+              className="
+                mt-6
+                rounded-2xl
+                border
+                border-dashed
+                border-slate-200
+                bg-slate-50
+                p-6
+                text-center
+
+                dark:border-slate-700
+                dark:bg-slate-800/50
+              "
+            >
               <BadgeCheck
                 size={32}
-                className="mx-auto text-slate-300"
+                className="
+                  mx-auto
+                  text-slate-300
+
+                  dark:text-slate-600
+                "
               />
 
-              <p className="mt-3 text-sm font-medium text-slate-500">
+              <p
+                className="
+                  mt-3
+                  text-sm
+                  font-medium
+                  text-slate-500
+
+                  dark:text-slate-400
+                "
+              >
                 No skills detected yet.
               </p>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p
+                className="
+                  mt-1
+                  text-xs
+                  text-slate-400
+                "
+              >
                 Upload and analyze a resume to see
                 your detected skills.
               </p>
             </div>
           )}
         </motion.div>
-
 
         {/* RECOMMENDED SKILLS */}
 
@@ -646,19 +1189,58 @@ const DashboardPage = () => {
           transition={{
             delay: 0.1,
           }}
-          className="rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+          className="
+            rounded-3xl
+            border
+            border-slate-100
+            bg-white
+            p-7
+
+            shadow-[0_8px_30px_rgba(80,70,140,0.06)]
+
+            dark:border-slate-800
+            dark:bg-slate-900
+          "
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+            <div
+              className="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-xl
+
+                bg-orange-100
+                text-orange-600
+
+                dark:bg-orange-500/15
+                dark:text-orange-400
+              "
+            >
               <Lightbulb size={22} />
             </div>
 
             <div>
-              <h2 className="text-xl font-black text-slate-900">
+              <h2
+                className="
+                  text-xl
+                  font-black
+                  text-slate-900
+
+                  dark:text-slate-900
+                "
+              >
                 Recommended Skills
               </h2>
 
-              <p className="text-sm text-slate-400">
+              <p
+                className="
+                  text-sm
+                  text-slate-400
+                "
+              >
                 Skills you can consider adding
               </p>
             </div>
@@ -670,7 +1252,21 @@ const DashboardPage = () => {
                 (skill, index) => (
                   <span
                     key={`${skill}-${index}`}
-                    className="rounded-full border border-orange-100 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700"
+                    className="
+                      rounded-full
+                      border
+                      border-orange-100
+                      bg-orange-50
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-orange-700
+
+                      dark:border-orange-500/20
+                      dark:bg-orange-500/10
+                      dark:text-orange-400
+                    "
                   >
                     {skill}
                   </span>
@@ -678,17 +1274,51 @@ const DashboardPage = () => {
               )}
             </div>
           ) : (
-            <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+            <div
+              className="
+                mt-6
+                rounded-2xl
+                border
+                border-dashed
+                border-slate-200
+                bg-slate-50
+                p-6
+                text-center
+
+                dark:border-slate-700
+                dark:bg-slate-800/50
+              "
+            >
               <Lightbulb
                 size={32}
-                className="mx-auto text-slate-300"
+                className="
+                  mx-auto
+                  text-slate-300
+
+                  dark:text-slate-600
+                "
               />
 
-              <p className="mt-3 text-sm font-medium text-slate-500">
+              <p
+                className="
+                  mt-3
+                  text-sm
+                  font-medium
+                  text-slate-500
+
+                  dark:text-slate-400
+                "
+              >
                 No recommendations yet.
               </p>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p
+                className="
+                  mt-1
+                  text-xs
+                  text-slate-400
+                "
+              >
                 Upload and analyze a resume to get
                 personalized skill recommendations.
               </p>
@@ -696,7 +1326,6 @@ const DashboardPage = () => {
           )}
         </motion.div>
       </section>
-
 
       {/* ===================================
           RECENT RESUMES
@@ -711,38 +1340,118 @@ const DashboardPage = () => {
           opacity: 1,
           y: 0,
         }}
-        className="mt-6 rounded-3xl border border-slate-100 bg-white p-7 shadow-[0_8px_30px_rgba(80,70,140,0.06)]"
+        className="
+          mt-6
+          rounded-3xl
+          border
+          border-slate-100
+          bg-white
+          p-7
+
+          shadow-[0_8px_30px_rgba(80,70,140,0.06)]
+
+          dark:border-slate-800
+          dark:bg-slate-900
+        "
       >
         <div>
-          <h2 className="text-xl font-black text-slate-900">
+          <h2
+            className="
+              text-xl
+              font-black
+              text-slate-900
+
+              dark:text-slate-900
+            "
+          >
             Recent Resumes
           </h2>
 
-          <p className="mt-1 text-sm text-slate-400">
+          <p
+            className="
+              mt-1
+              text-sm
+              text-slate-400
+            "
+          >
             Your latest resume analyses
           </p>
         </div>
 
         {recentResumes.length > 0 ? (
-          <div className="mt-5 divide-y divide-slate-100">
+          <div
+            className="
+              mt-5
+              divide-y
+              divide-slate-100
+
+              dark:divide-slate-800
+            "
+          >
             {recentResumes.map(
               (resume) => (
                 <div
                   key={resume._id}
-                  className="flex flex-col justify-between gap-4 py-5 sm:flex-row sm:items-center"
+                  className="
+                    flex
+                    flex-col
+                    justify-between
+                    gap-4
+                    py-5
+
+                    sm:flex-row
+                    sm:items-center
+                  "
                 >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                  <div
+                    className="
+                      flex
+                      min-w-0
+                      items-center
+                      gap-4
+                    "
+                  >
+                    <div
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+
+                        bg-violet-50
+                        text-violet-600
+
+                        dark:bg-violet-500/10
+                        dark:text-violet-400
+                      "
+                    >
                       <FileText size={20} />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="truncate font-bold text-slate-800">
+                      <p
+                        className="
+                          truncate
+                          font-bold
+                          text-slate-800
+
+                          dark:text-slate-900
+                        "
+                      >
                         {resume.originalName ||
                           "Resume"}
                       </p>
 
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p
+                        className="
+                          mt-1
+                          text-xs
+                          text-slate-400
+                        "
+                      >
                         {resume.createdAt
                           ? new Date(
                               resume.createdAt
@@ -752,19 +1461,36 @@ const DashboardPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-7">
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-7
+                    "
+                  >
                     <div>
-                      <p className="text-xs text-slate-400">
+                      <p
+                        className="
+                          text-xs
+                          text-slate-400
+                        "
+                      >
                         Status
                       </p>
 
                       <p
-                        className={`mt-1 text-sm font-bold ${
-                          resume.status ===
-                          "Completed"
-                            ? "text-emerald-600"
-                            : "text-orange-500"
-                        }`}
+                        className={`
+                          mt-1
+                          text-sm
+                          font-bold
+
+                          ${
+                            resume.status ===
+                            "Completed"
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : "text-orange-500 dark:text-orange-400"
+                          }
+                        `}
                       >
                         {resume.status ||
                           "Processing"}
@@ -772,12 +1498,25 @@ const DashboardPage = () => {
                     </div>
 
                     <div className="text-right">
-                      <p className="text-2xl font-black text-violet-600">
+                      <p
+                        className="
+                          text-2xl
+                          font-black
+                          text-violet-600
+
+                          dark:text-violet-400
+                        "
+                      >
                         {resume.atsScore ??
                           0}
                       </p>
 
-                      <p className="text-xs text-slate-400">
+                      <p
+                        className="
+                          text-xs
+                          text-slate-400
+                        "
+                      >
                         ATS Score
                       </p>
                     </div>
@@ -790,10 +1529,21 @@ const DashboardPage = () => {
           <div className="py-12 text-center">
             <FileText
               size={40}
-              className="mx-auto text-slate-300"
+              className="
+                mx-auto
+                text-slate-300
+
+                dark:text-slate-600
+              "
             />
 
-            <p className="mt-3 text-sm text-slate-400">
+            <p
+              className="
+                mt-3
+                text-sm
+                text-slate-400
+              "
+            >
               No resumes uploaded yet.
             </p>
           </div>

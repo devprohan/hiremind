@@ -10,9 +10,10 @@ export default function UploadResumePage() {
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
 
-  // -----------------------------
-  // Handle Selected File
-  // -----------------------------
+  // =====================================================
+  // HANDLE SELECTED FILE
+  // =====================================================
+
   const handleFile = (file) => {
     setError("");
 
@@ -38,9 +39,10 @@ export default function UploadResumePage() {
     setSelectedFile(file);
   };
 
-  // -----------------------------
-  // Browse
-  // -----------------------------
+  // =====================================================
+  // BROWSE
+  // =====================================================
+
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
 
@@ -50,9 +52,10 @@ export default function UploadResumePage() {
     e.target.value = "";
   };
 
-  // -----------------------------
-  // Drag Over
-  // -----------------------------
+  // =====================================================
+  // DRAG OVER
+  // =====================================================
+
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -60,9 +63,10 @@ export default function UploadResumePage() {
     setIsDragging(true);
   };
 
-  // -----------------------------
-  // Drag Leave
-  // -----------------------------
+  // =====================================================
+  // DRAG LEAVE
+  // =====================================================
+
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -70,9 +74,10 @@ export default function UploadResumePage() {
     setIsDragging(false);
   };
 
-  // -----------------------------
-  // Drop
-  // -----------------------------
+  // =====================================================
+  // DROP
+  // =====================================================
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -84,9 +89,10 @@ export default function UploadResumePage() {
     handleFile(file);
   };
 
-  // -----------------------------
-  // Upload
-  // -----------------------------
+  // =====================================================
+  // UPLOAD
+  // =====================================================
+
   const handleUpload = async () => {
     if (!selectedFile) {
       setError("Please select your resume first.");
@@ -106,16 +112,16 @@ export default function UploadResumePage() {
       console.log("Upload Success:", data);
 
       navigate("/dashboard/my-resume");
-
     } catch (err) {
       console.error("Resume Upload Error:", err);
 
       const status = err.response?.status;
       const serverMessage = err.response?.data?.message;
 
-      // ---------------------------------
-      // Gemini quota / rate limit
-      // ---------------------------------
+      // =================================================
+      // GEMINI QUOTA / RATE LIMIT
+      // =================================================
+
       if (
         status === 429 ||
         serverMessage?.includes("RESOURCE_EXHAUSTED") ||
@@ -132,9 +138,10 @@ export default function UploadResumePage() {
         return;
       }
 
-      // ---------------------------------
-      // Hide raw JSON / Gemini errors
-      // ---------------------------------
+      // =================================================
+      // HIDE RAW GEMINI ERRORS
+      // =================================================
+
       if (
         typeof serverMessage === "string" &&
         (
@@ -153,9 +160,10 @@ export default function UploadResumePage() {
         return;
       }
 
-      // ---------------------------------
-      // Normal backend error
-      // ---------------------------------
+      // =================================================
+      // NORMAL BACKEND ERROR
+      // =================================================
+
       setError(
         serverMessage ||
           "Unable to analyze your resume. Please try again."
@@ -166,62 +174,156 @@ export default function UploadResumePage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
+    <div
+      className="
+        mx-auto
+        w-full
+        max-w-5xl
 
-      {/* =========================
-          Heading
-      ========================== */}
+        transition-colors
+        duration-300
+      "
+    >
+      {/* =================================================
+          HEADING
+      ================================================= */}
+
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-slate-900">
+        <h1
+          className="
+           text-4xl font-black text-slate-900 dark:text-white
+          "
+        >
           Upload Your Resume
         </h1>
 
-        <p className="mt-2 text-lg text-slate-500">
+        <p
+          className="
+            mt-2
+            text-lg
+            text-slate-500
+
+            dark:text-slate-500
+          "
+        >
           Upload your resume in PDF format to get started.
         </p>
       </div>
 
-      {/* =========================
-          Upload Card
-      ========================== */}
-      <div className="mx-auto mt-10 w-full rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      {/* =================================================
+          UPLOAD CARD
+      ================================================= */}
 
-        {/* =========================
-            Drop Zone
-        ========================== */}
+      <div
+        className="
+          mx-auto
+          mt-10
+          w-full
+          rounded-3xl
+
+          border
+          border-slate-200
+
+          bg-white
+
+          p-8
+
+          shadow-sm
+
+          transition-colors
+          duration-300
+
+          dark:border-slate-800
+          dark:bg-slate-900
+        "
+      >
+        {/* =================================================
+            DROP ZONE
+        ================================================= */}
+
         <label
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`grid h-80 cursor-pointer place-items-center rounded-2xl border-2 border-dashed text-center transition-all duration-200 ${
-            isDragging
-              ? "scale-[1.01] border-violet-600 bg-violet-100"
-              : "border-violet-300 bg-violet-50/40 hover:bg-violet-50"
-          }`}
+          className={`
+            grid
+            h-80
+            cursor-pointer
+            place-items-center
+            rounded-2xl
+            border-2
+            border-dashed
+            text-center
+            transition-all
+            duration-200
+
+            ${
+              isDragging
+                ? `
+                  scale-[1.01]
+                  border-violet-600
+                  bg-violet-100
+
+                  dark:border-violet-400
+                  dark:bg-violet-500/10
+                `
+                : `
+                  border-violet-300
+                  bg-violet-50/40
+
+                  hover:bg-violet-50
+
+                  dark:border-violet-500/40
+                  dark:bg-violet-500/5
+                  dark:hover:bg-violet-500/10
+                `
+            }
+          `}
         >
           <div>
+            {/* CLOUD ICON */}
 
-            {/* Cloud Icon */}
             <div
-              className={`text-6xl transition-transform duration-200 ${
-                isDragging ? "scale-110" : ""
-              }`}
+              className={`
+                text-6xl
+                transition-transform
+                duration-200
+
+                ${isDragging ? "scale-110" : ""}
+              `}
             >
               ☁️
             </div>
 
-            {/* Title */}
-            <h2 className="mt-4 text-xl font-bold text-slate-800">
+            {/* TITLE */}
+
+            <h2
+              className="
+                mt-4
+                text-xl
+                font-bold
+                text-slate-800
+
+                dark:text-slate-900
+              "
+            >
               {isDragging
                 ? "Drop your resume here"
                 : "Drag & drop your PDF here"}
             </h2>
 
-            {/* Subtitle */}
-            <p className="mt-2 text-slate-500">
+            {/* SUBTITLE */}
+
+            <p
+              className="
+                mt-2
+                text-slate-500
+
+                dark:text-slate-500
+              "
+            >
               or click to browse · Max 5MB
             </p>
-
           </div>
 
           <input
@@ -232,29 +334,88 @@ export default function UploadResumePage() {
           />
         </label>
 
-        {/* =========================
-            Selected File
-        ========================== */}
+        {/* =================================================
+            SELECTED FILE
+        ================================================= */}
+
         {selectedFile && !error && (
-          <div className="mt-4 flex items-center justify-between rounded-xl border border-violet-200 bg-violet-50 p-4">
+          <div
+            className="
+              mt-4
+              flex
+              items-center
+              justify-between
+              rounded-xl
 
+              border
+              border-violet-200
+
+              bg-violet-50
+
+              p-4
+
+              dark:border-violet-500/30
+              dark:bg-violet-500/10
+            "
+          >
             <div className="flex min-w-0 items-center gap-3">
+              {/* FILE ICON */}
 
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-xl">
+              <div
+                className="
+                  flex
+                  h-10
+                  w-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-lg
+
+                  bg-violet-100
+
+                  text-xl
+
+                  dark:bg-violet-500/20
+                "
+              >
                 📄
               </div>
 
+              {/* FILE INFO */}
+
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-violet-700">
+                <p
+                  className="
+                    truncate
+                    text-sm
+                    font-semibold
+                    text-violet-700
+
+                    dark:text-violet-400
+                  "
+                >
                   {selectedFile.name}
                 </p>
 
-                <p className="mt-1 text-xs text-slate-500">
-                  {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                <p
+                  className="
+                    mt-1
+                    text-xs
+                    text-slate-500
+
+                    dark:text-slate-400
+                  "
+                >
+                  {(
+                    selectedFile.size /
+                    (1024 * 1024)
+                  ).toFixed(2)}{" "}
+                  MB
                 </p>
               </div>
-
             </div>
+
+            {/* REMOVE */}
 
             <button
               type="button"
@@ -262,56 +423,168 @@ export default function UploadResumePage() {
                 setSelectedFile(null);
                 setError("");
               }}
-              className="ml-3 shrink-0 rounded-lg px-3 py-1 text-sm font-medium text-red-500 transition hover:bg-red-100"
+              className="
+                ml-3
+                shrink-0
+                rounded-lg
+                px-3
+                py-1
+                text-sm
+                font-medium
+                text-red-500
+
+                transition
+
+                hover:bg-red-100
+
+                dark:text-red-400
+                dark:hover:bg-red-500/10
+              "
             >
               Remove
             </button>
-
           </div>
         )}
 
-        {/* =========================
-            Error
-        ========================== */}
-        {error && (
-          <div className="mt-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
+        {/* =================================================
+            ERROR
+        ================================================= */}
 
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100">
-              <span className="text-lg">⚠️</span>
+        {error && (
+          <div
+            className="
+              mt-4
+              flex
+              items-start
+              gap-3
+              rounded-xl
+
+              border
+              border-red-200
+
+              bg-red-50
+
+              p-4
+
+              dark:border-red-900/50
+              dark:bg-red-500/10
+            "
+          >
+            {/* WARNING ICON */}
+
+            <div
+              className="
+                flex
+                h-9
+                w-9
+                shrink-0
+                items-center
+                justify-center
+                rounded-full
+
+                bg-red-100
+
+                dark:bg-red-500/20
+              "
+            >
+              <span className="text-lg">
+                ⚠️
+              </span>
             </div>
 
+            {/* ERROR MESSAGE */}
+
             <div className="flex-1">
-              <p className="font-semibold text-red-700">
+              <p
+                className="
+                  font-semibold
+                  text-red-700
+
+                  dark:text-red-400
+                "
+              >
                 Analysis unavailable
               </p>
 
-              <p className="mt-1 text-sm leading-5 text-red-600">
+              <p
+                className="
+                  mt-1
+                  text-sm
+                  leading-5
+                  text-red-600
+
+                  dark:text-red-400/90
+                "
+              >
                 {error}
               </p>
             </div>
 
+            {/* CLOSE */}
+
             <button
               type="button"
               onClick={() => setError("")}
-              className="text-sm text-red-400 transition hover:text-red-600"
+              className="
+                text-sm
+                text-red-400
+                transition
+
+                hover:text-red-600
+
+                dark:hover:text-red-300
+              "
             >
               ✕
             </button>
-
           </div>
         )}
 
-        {/* =========================
-            Upload Button
-        ========================== */}
+        {/* =================================================
+            UPLOAD BUTTON
+        ================================================= */}
+
         <button
+          type="button"
           onClick={handleUpload}
           disabled={loading || !selectedFile}
-          className="mt-6 w-full rounded-xl bg-violet-600 p-4 font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="
+            mt-6
+            w-full
+            rounded-xl
+
+            bg-violet-600
+
+            p-4
+
+            font-semibold
+            text-white
+
+            transition
+
+            hover:bg-violet-700
+
+            dark:bg-violet-600
+            dark:hover:bg-violet-500
+
+            disabled:cursor-not-allowed
+            disabled:opacity-50
+          "
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <span
+                className="
+                  h-5
+                  w-5
+                  animate-spin
+                  rounded-full
+                  border-2
+                  border-white
+                  border-t-transparent
+                "
+              />
+
               Analyzing Resume...
             </span>
           ) : error ? (
@@ -320,7 +593,6 @@ export default function UploadResumePage() {
             "Upload & Analyze"
           )}
         </button>
-
       </div>
     </div>
   );

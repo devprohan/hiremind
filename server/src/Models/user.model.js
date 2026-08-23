@@ -93,10 +93,7 @@ const userSchema = new mongoose.Schema(
     type: Boolean,
     default: false,
   },
-  darkMode: {
-    type: Boolean,
-    default: false,
-  },
+
 },
   },
   {

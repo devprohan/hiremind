@@ -16,6 +16,10 @@ const JobMatchPage = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState("");
 
+  // =====================================================
+  // ANALYZE JOB MATCH
+  // =====================================================
+
   const handleAnalyze = async ({
     resumeId,
     jobDescription,
@@ -26,18 +30,37 @@ const JobMatchPage = () => {
       setResult(null);
 
       console.log("Resume ID:", resumeId);
-      console.log("Job Description:", jobDescription);
+      console.log(
+        "Job Description:",
+        jobDescription
+      );
 
       const response = await matchJob(
         resumeId,
         jobDescription
       );
 
-      console.log("JOB MATCH RESPONSE:", response);
+      console.log(
+        "JOB MATCH RESPONSE:",
+        response
+      );
 
       setResult(response.data);
     } catch (error) {
-      console.error("Job Match Error:", error);
+      console.error(
+        "Job Match Error:",
+        error
+      );
+
+      console.error(
+        "STATUS:",
+        error.response?.status
+      );
+
+      console.error(
+        "BACKEND DATA:",
+        error.response?.data
+      );
 
       setError(
         error.response?.data?.message ||
@@ -49,70 +72,160 @@ const JobMatchPage = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div
+      className="
+        min-h-screen
+        space-y-8
+        bg-slate-50
+        p-2
 
-      {/* Header */}
+        transition-colors
+        duration-300
+
+        dark:bg-slate-950
+
+        md:p-4
+      "
+    >
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <div>
         <div className="flex items-center gap-3">
 
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100">
-            <BriefcaseBusiness
-              size={25}
-              className="text-violet-600"
-            />
+          {/* ICON */}
+
+          <div
+            className="
+              flex
+              h-12
+              w-12
+              shrink-0
+              items-center
+              justify-center
+              rounded-2xl
+
+              bg-violet-100
+              text-violet-600
+
+              dark:bg-violet-500/20
+              dark:text-violet-400
+            "
+          >
+            <BriefcaseBusiness size={25} />
           </div>
 
+          {/* TITLE */}
+
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h1
+              className="
+                text-4xl font-black text-slate-900 dark:text-white
+              "
+            >
               Job Match
             </h1>
 
-            <p className="mt-1 text-slate-500">
+            <p
+              className="
+                mt-1
+                text-slate-500
+
+                dark:text-slate-500
+              "
+            >
               Discover how well your resume matches
               your target job.
             </p>
           </div>
-
         </div>
       </div>
 
-      {/* Job Description Form */}
+      {/* =================================================
+          JOB DESCRIPTION FORM
+      ================================================= */}
+
       <JobDescriptionForm
         onAnalyze={handleAnalyze}
         analyzing={analyzing}
       />
 
-      {/* API Error */}
+      {/* =================================================
+          API ERROR
+      ================================================= */}
+
       {error && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-600">
+        <div
+          className="
+            rounded-2xl
+            border
+            border-red-200
+            bg-red-50
+            p-4
+            text-sm
+            text-red-600
+
+            dark:border-red-900/50
+            dark:bg-red-500/10
+            dark:text-red-400
+          "
+        >
           {error}
         </div>
       )}
 
-      {/* Result */}
+      {/* =================================================
+          RESULT
+      ================================================= */}
+
       {result && (
         <div className="space-y-6">
+
+          {/* ANALYSIS HEADER */}
 
           <div className="flex items-center gap-2">
             <Sparkles
               size={20}
-              className="text-violet-600"
+              className="
+                text-violet-600
+
+                dark:text-violet-400
+              "
             />
 
-            <h2 className="text-xl font-bold text-slate-800">
+            <h2
+              className="
+                text-xl
+                font-bold
+                text-slate-800
+
+                dark:text-white
+              "
+            >
               AI Match Analysis
             </h2>
           </div>
 
-          <MatchScoreCard result={result} />
+          {/* MATCH SCORE */}
 
-          <SkillsComparison result={result} />
+          <MatchScoreCard
+            result={result}
+          />
 
-          <RecommendationCard result={result} />
+          {/* SKILLS */}
 
+          <SkillsComparison
+            result={result}
+          />
+
+          {/* RECOMMENDATIONS */}
+
+          <RecommendationCard
+            result={result}
+          />
         </div>
       )}
-
     </div>
   );
 };

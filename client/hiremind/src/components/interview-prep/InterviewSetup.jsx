@@ -15,26 +15,85 @@ const InterviewSetup = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm"
+      className="
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-8
+        shadow-sm
+
+        dark:border-slate-700
+        dark:bg-slate-900
+      "
     >
+      {/* Header */}
+
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+
+        <div
+          className="
+            flex
+            h-12
+            w-12
+            items-center
+            justify-center
+            rounded-xl
+            bg-violet-100
+            text-violet-600
+
+            dark:bg-violet-500/15
+            dark:text-violet-400
+          "
+        >
           <BrainCircuit size={25} />
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-slate-800">
+
+          <h2
+            className="
+              text-xl
+              font-bold
+              text-slate-800
+
+              dark:text-slate-100
+            "
+          >
             AI Mock Interview
           </h2>
 
-          <p className="text-sm text-slate-500">
+          <p
+            className="
+              text-sm
+              text-slate-500
+
+              dark:text-slate-400
+            "
+          >
             Generate personalized questions from your latest resume
           </p>
+
         </div>
       </div>
 
+      {/* Job Role */}
+
       <div className="mt-8">
-        <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
+
+        <label
+          className="
+            mb-2
+            flex
+            items-center
+            gap-2
+            text-sm
+            font-semibold
+            text-slate-700
+
+            dark:text-slate-200
+          "
+        >
           <BriefcaseBusiness size={17} />
 
           Target Job Role
@@ -46,24 +105,50 @@ const InterviewSetup = ({
           onChange={(e) => setJobRole(e.target.value)}
           placeholder="e.g. MERN Stack Developer"
           className="
-            w-full rounded-xl
-            border border-slate-200
+            w-full
+            rounded-xl
+            border
+            border-slate-200
             bg-slate-50
-            px-4 py-3.5
+            px-4
+            py-3.5
+            text-slate-800
             outline-none
             transition
+
             placeholder:text-slate-400
+
             focus:border-violet-500
             focus:bg-white
             focus:ring-4
             focus:ring-violet-100
+
+            dark:border-slate-700
+            dark:bg-slate-800
+            dark:text-slate-100
+            dark:placeholder:text-slate-500
+
+            dark:focus:border-violet-500
+            dark:focus:bg-slate-800
+            dark:focus:ring-violet-500/20
           "
         />
 
-        <p className="mt-2 text-xs text-slate-400">
+        <p
+          className="
+            mt-2
+            text-xs
+            text-slate-400
+
+            dark:text-slate-500
+          "
+        >
           Questions will be personalized using your latest analyzed resume.
         </p>
+
       </div>
+
+      {/* Generate Button */}
 
       <motion.button
         whileHover={{ scale: 1.01 }}
@@ -71,15 +156,24 @@ const InterviewSetup = ({
         onClick={onGenerate}
         disabled={loading || !jobRole.trim()}
         className="
-          mt-7 flex w-full cursor-pointer
-          items-center justify-center gap-2
+          mt-7
+          flex
+          w-full
+          cursor-pointer
+          items-center
+          justify-center
+          gap-2
           rounded-xl
           bg-gradient-to-r
-          from-violet-600 to-indigo-600
-          px-5 py-3.5
-          font-semibold text-white
+          from-violet-600
+          to-indigo-600
+          px-5
+          py-3.5
+          font-semibold
+          text-white
           shadow-sm
           transition
+
           disabled:cursor-not-allowed
           disabled:opacity-50
         "

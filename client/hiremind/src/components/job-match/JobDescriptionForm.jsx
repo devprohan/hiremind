@@ -64,14 +64,17 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
     });
   };
 
-  // Loading state
+  /* =========================
+     LOADING
+  ========================= */
+
   if (loadingResumes) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-8">
-        <div className="flex items-center justify-center gap-3 text-slate-500">
+      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <div className="flex items-center justify-center gap-3 text-slate-500 dark:text-slate-400">
           <LoaderCircle
             size={20}
-            className="animate-spin text-violet-600"
+            className="animate-spin text-violet-600 dark:text-violet-400"
           />
 
           <span>Loading your resumes...</span>
@@ -80,33 +83,36 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
     );
   }
 
-  // No resumes - New User
+  /* =========================
+     NO RESUMES
+  ========================= */
+
   if (resumes.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
         {/* Icon */}
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-500/15">
           <FileText
             size={30}
-            className="text-violet-600"
+            className="text-violet-600 dark:text-violet-400"
           />
         </div>
 
         {/* Heading */}
-        <h2 className="mt-5 text-xl font-bold text-slate-900">
+        <h2 className="mt-5 text-xl font-bold text-slate-900 dark:text-white">
           No Resume Found
         </h2>
 
         {/* Description */}
-        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
           You need to upload a resume before you can
           analyze how well it matches a job description.
         </p>
 
         {/* Error */}
         {error && (
-          <div className="mx-auto mt-4 max-w-md rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mx-auto mt-4 max-w-md rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
             {error}
           </div>
         )}
@@ -138,26 +144,29 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
     );
   }
 
-  // Resumes available
+  /* =========================
+     RESUMES AVAILABLE
+  ========================= */
+
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
 
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-500/15">
           <BriefcaseBusiness
             size={22}
-            className="text-violet-600"
+            className="text-violet-600 dark:text-violet-400"
           />
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-slate-800">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
             Analyze Job Match
           </h2>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Compare your resume with a job description
           </p>
         </div>
@@ -166,9 +175,12 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
 
       <form onSubmit={handleSubmit}>
 
-        {/* Resume */}
+        {/* =========================
+            RESUME
+        ========================= */}
+
         <div>
-          <label className="mb-2 block text-sm font-semibold text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">
             Select Resume
           </label>
 
@@ -176,7 +188,7 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
 
             <FileText
               size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500"
             />
 
             <select
@@ -196,9 +208,15 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
                 text-slate-700
                 outline-none
                 transition
+
+                dark:border-slate-700
+                dark:bg-slate-800
+                dark:text-slate-100
+
                 focus:border-violet-500
                 focus:ring-2
                 focus:ring-violet-100
+                dark:focus:ring-violet-500/20
               "
             >
               <option value="">
@@ -218,16 +236,19 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
           </div>
         </div>
 
-        {/* Job Description */}
+        {/* =========================
+            JOB DESCRIPTION
+        ========================= */}
+
         <div className="mt-5">
 
           <div className="mb-2 flex items-center justify-between">
 
-            <label className="text-sm font-semibold text-slate-700">
+            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
               Job Description
             </label>
 
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-400 dark:text-slate-500">
               {jobDescription.length} characters
             </span>
 
@@ -246,29 +267,44 @@ const JobDescriptionForm = ({ onAnalyze, analyzing }) => {
               rounded-xl
               border
               border-slate-200
+              bg-white
               p-4
               text-sm
               leading-6
               text-slate-700
               outline-none
               transition
+
               placeholder:text-slate-400
+
+              dark:border-slate-700
+              dark:bg-slate-800
+              dark:text-slate-100
+              dark:placeholder:text-slate-500
+
               focus:border-violet-500
               focus:ring-2
               focus:ring-violet-100
+              dark:focus:ring-violet-500/20
             "
           />
 
         </div>
 
-        {/* Error */}
+        {/* =========================
+            ERROR
+        ========================= */}
+
         {error && (
-          <div className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
             {error}
           </div>
         )}
 
-        {/* Analyze Button */}
+        {/* =========================
+            ANALYZE BUTTON
+        ========================= */}
+
         <button
           type="submit"
           disabled={analyzing}

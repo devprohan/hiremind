@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 import {
   getMyResumes,
   deleteResume,
@@ -18,6 +19,10 @@ export default function MyResumesPage() {
   const [filter, setFilter] = useState("All");
   const [sort, setSort] = useState("Newest");
 
+  // =====================================================
+  // FETCH RESUMES
+  // =====================================================
+
   const fetchResumes = async () => {
     try {
       setLoading(true);
@@ -26,7 +31,7 @@ export default function MyResumesPage() {
 
       setResumes(data.resumes || []);
     } catch (error) {
-      console.log(error);
+      console.error("Failed to fetch resumes:", error);
     } finally {
       setLoading(false);
     }
@@ -36,18 +41,20 @@ export default function MyResumesPage() {
     fetchResumes();
   }, []);
 
-  // ==========================
-  // Search
-  // ==========================
+  // =====================================================
+  // SEARCH
+  // =====================================================
+
   let filtered = resumes.filter((resume) =>
     (resume.originalName || "")
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
-  // ==========================
-  // Filter
-  // ==========================
+  // =====================================================
+  // FILTER
+  // =====================================================
+
   filtered = filtered.filter((resume) => {
     const score = Number(resume.atsScore);
 
@@ -69,51 +76,72 @@ export default function MyResumesPage() {
     }
   });
 
-  // ==========================
-  // Sorting
-  // ==========================
+  // =====================================================
+  // SORT
+  // =====================================================
+
   filtered.sort((a, b) => {
     switch (sort) {
       case "Newest":
-        return new Date(b.createdAt) - new Date(a.createdAt);
+        return (
+          new Date(b.createdAt) -
+          new Date(a.createdAt)
+        );
 
       case "Oldest":
-        return new Date(a.createdAt) - new Date(b.createdAt);
+        return (
+          new Date(a.createdAt) -
+          new Date(b.createdAt)
+        );
 
       case "Highest":
-        return b.atsScore - a.atsScore;
+        return (
+          Number(b.atsScore) -
+          Number(a.atsScore)
+        );
 
       case "Lowest":
-        return a.atsScore - b.atsScore;
+        return (
+          Number(a.atsScore) -
+          Number(b.atsScore)
+        );
 
       default:
         return 0;
     }
   });
 
-  // ==========================
-  // Stats
-  // ==========================
+  // =====================================================
+  // STATS
+  // =====================================================
+
   const total = resumes.length;
 
   const highest =
     resumes.length > 0
-      ? Math.max(...resumes.map((r) => Number(r.atsScore)))
+      ? Math.max(
+          ...resumes.map((r) =>
+            Number(r.atsScore) || 0
+          )
+        )
       : 0;
 
   const average =
     resumes.length > 0
       ? Math.round(
           resumes.reduce(
-            (sum, r) => sum + Number(r.atsScore),
+            (sum, r) =>
+              sum +
+              (Number(r.atsScore) || 0),
             0
           ) / resumes.length
         )
       : 0;
 
-  // ==========================
-  // Delete Resume
-  // ==========================
+  // =====================================================
+  // DELETE RESUME
+  // =====================================================
+
   const handleDelete = async (id) => {
     const ok = window.confirm(
       "Are you sure you want to delete this resume?"
@@ -125,36 +153,69 @@ export default function MyResumesPage() {
       await deleteResume(id);
 
       setResumes((prev) =>
-        prev.filter((resume) => resume._id !== id)
+        prev.filter(
+          (resume) => resume._id !== id
+        )
       );
     } catch (err) {
-      console.log(err);
+      console.error(
+        "Failed to delete resume:",
+        err
+      );
     }
   };
 
-  return (
-    <div className="space-y-8">
+  // =====================================================
+  // UI
+  // =====================================================
 
-      {/* Header */}
+  return (
+    <div
+      className="
+        min-h-screen
+        space-y-8
+
+        transition-colors
+        duration-300
+      "
+    >
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <div>
-        <h1 className="text-4xl font-black text-slate-900">
+        <h1
+          className="
+            text-4xl font-black text-slate-900 dark:text-white
+          "
+        >
           My Resumes
         </h1>
 
-        <p className="mt-2 text-slate-500">
+        <p
+          className="
+            mt-2
+            text-slate-500
+
+            dark:text-slate-500
+          "
+        >
           Manage and analyze all your uploaded resumes
         </p>
       </div>
 
-      {/* Search */}
+      {/* =================================================
+          SEARCH
+      ================================================= */}
 
       <SearchBar
         search={search}
         setSearch={setSearch}
       />
 
-      {/* Stats */}
+      {/* =================================================
+          STATS
+      ================================================= */}
 
       <ResumeStats
         total={total}
@@ -162,7 +223,9 @@ export default function MyResumesPage() {
         highest={highest}
       />
 
-      {/* Filter */}
+      {/* =================================================
+          FILTER
+      ================================================= */}
 
       <FilterBar
         filter={filter}
@@ -171,7 +234,9 @@ export default function MyResumesPage() {
         setSort={setSort}
       />
 
-      {/* Resume Grid */}
+      {/* =================================================
+          RESUME GRID
+      ================================================= */}
 
       <ResumeGrid
         resumes={filtered}
@@ -179,10 +244,11 @@ export default function MyResumesPage() {
         onDelete={handleDelete}
       />
 
-      {/* Upload */}
+      {/* =================================================
+          UPLOAD MORE
+      ================================================= */}
 
       <UploadMore />
-
     </div>
   );
 }
