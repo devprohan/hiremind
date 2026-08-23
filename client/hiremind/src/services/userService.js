@@ -1,67 +1,31 @@
-import axios from "axios";
+import api from "./api";
 
-const API = "http://localhost:8080/api/users";
-
-const authConfig = {
-  withCredentials: true,
-};
-
-// Get current user
 export const getCurrentUser = async () => {
-  const res = await axios.get(`${API}/me`, authConfig);
-
+  const res = await api.get("/users/me");
   return res.data;
 };
 
-// Update profile
 export const updateProfile = async (data) => {
-  const res = await axios.put(
-    `${API}/profile`,
-    data,
-    authConfig
-  );
-
+  const res = await api.put("/users/profile", data);
   return res.data;
 };
 
-// Change password
-export const changePassword = async (data) => {
-  const res = await axios.put(
-    "http://localhost:8080/api/auth/change-password",
-    data,
-    authConfig
-  );
-
-  return res.data;
-};
-
-// Get preferences
 export const getPreferences = async () => {
-  const res = await axios.get(
-    `${API}/preferences`,
-    authConfig
-  );
-
+  const res = await api.get("/users/preferences");
   return res.data;
 };
 
-// Update preferences
 export const updatePreferences = async (preferences) => {
-  const res = await axios.put(
-    `${API}/preferences`,
-    preferences,
-    authConfig
-  );
-
+  const res = await api.put("/users/preferences", preferences);
   return res.data;
 };
 
-// Delete account
 export const deleteAccount = async () => {
-  const res = await axios.delete(
-    `${API}/account`,
-    authConfig
-  );
+  const res = await api.delete("/users/account");
+  return res.data;
+};
 
+export const changePassword = async (data) => {
+  const res = await api.put("/auth/change-password", data);
   return res.data;
 };

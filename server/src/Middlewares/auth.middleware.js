@@ -3,7 +3,8 @@ const User = require("../Models/user.model.js");
 
 const protect = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    // Get JWT from HttpOnly cookie
+    const token = req.cookies?.token;
 
     if (!token) {
       return res.status(401).json({
@@ -12,14 +13,14 @@ const protect = async (req, res, next) => {
       });
     }
 
+    // Verify JWT
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    const user = await User.findById(decoded.id).select(
-      "-password"
-    );
+    // Find user
+    const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
       return res.status(404).json({
@@ -28,10 +29,14 @@ const protect = async (req, res, next) => {
       });
     }
 
+    // Attach user to request
     req.user = user;
 
     next();
+
   } catch (error) {
+    console.error("Auth Middleware Error:", error.message);
+
     return res.status(401).json({
       success: false,
       message: "Invalid or Expired Token",

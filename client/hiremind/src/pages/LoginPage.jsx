@@ -1,17 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, googleLogin } from "../services/authService";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token =
-      localStorage.getItem("token") || sessionStorage.getItem("token");
-    if (token) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -45,7 +37,9 @@ export default function LoginPage() {
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
       newErrors.email = "Enter a valid email address";
     }
 
@@ -63,9 +57,7 @@ export default function LoginPage() {
 
     setServerError("");
 
-    const isValid = validateForm();
-
-    if (!isValid) {
+    if (!validateForm()) {
       return;
     }
 
@@ -78,14 +70,20 @@ export default function LoginPage() {
         rememberMe: formData.rememberMe,
       };
 
+      // Backend sets JWT in HTTP-only cookie
       await loginUser(userData);
 
-      navigate("/dashboard");
+      // Cookie-based auth → no localStorage token required
+      navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.log("Login Error:", error);
+      console.error(
+        "Login Error:",
+        error.response?.data || error.message
+      );
 
       setServerError(
-        error.response?.data?.message || "Login failed. Please try again.",
+        error.response?.data?.message ||
+          "Login failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -96,30 +94,29 @@ export default function LoginPage() {
     return `w-full rounded-xl border bg-white px-4 py-3
     text-slate-800 outline-none transition duration-300
     placeholder:text-slate-400
-    ${errors[fieldName]
+    ${
+      errors[fieldName]
         ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
         : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-      }`;
+    }`;
   };
 
   return (
     <div className="relative grid min-h-screen place-items-center overflow-hidden bg-[#faf9ff] px-6 py-12">
       {/* Aurora Background */}
-
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-violet-300/40 blur-[120px]" />
-
         <div className="absolute -right-20 top-20 h-96 w-96 rounded-full bg-pink-300/40 blur-[120px]" />
-
         <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-cyan-200/30 blur-[120px]" />
       </div>
 
       {/* Login Card */}
-
       <div className="relative z-10 w-full max-w-md rounded-[32px] border border-white/70 bg-white/80 p-8 shadow-[0_25px_80px_rgba(124,58,237,0.15)] backdrop-blur-xl md:p-10">
         {/* Logo */}
-
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
+        <Link
+          to="/"
+          className="mb-8 flex items-center justify-center gap-2"
+        >
           <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-600 to-pink-500 text-xl font-black text-white shadow-lg shadow-violet-200">
             H
           </div>
@@ -131,7 +128,6 @@ export default function LoginPage() {
         </Link>
 
         {/* Heading */}
-
         <div className="text-center">
           <h1 className="text-3xl font-black tracking-tight text-slate-900">
             Welcome back 👋
@@ -143,7 +139,6 @@ export default function LoginPage() {
         </div>
 
         {/* Server Error */}
-
         {serverError && (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             {serverError}
@@ -151,10 +146,12 @@ export default function LoginPage() {
         )}
 
         {/* Form */}
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 space-y-5"
+          noValidate
+        >
           {/* Email */}
-
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
               Email Address
@@ -170,12 +167,13 @@ export default function LoginPage() {
             />
 
             {errors.email && (
-              <p className="mt-2 text-sm text-red-500">{errors.email}</p>
+              <p className="mt-2 text-sm text-red-500">
+                {errors.email}
+              </p>
             )}
           </div>
 
           {/* Password */}
-
           <div>
             <div className="mb-2 flex items-center justify-between">
               <label className="text-sm font-semibold text-slate-700">
@@ -210,12 +208,13 @@ export default function LoginPage() {
             </div>
 
             {errors.password && (
-              <p className="mt-2 text-sm text-red-500">{errors.password}</p>
+              <p className="mt-2 text-sm text-red-500">
+                {errors.password}
+              </p>
             )}
           </div>
 
           {/* Remember Me */}
-
           <div className="flex items-center gap-2">
             <input
               id="remember"
@@ -230,13 +229,15 @@ export default function LoginPage() {
               }
             />
 
-            <label htmlFor="remember" className="text-sm text-slate-500">
+            <label
+              htmlFor="remember"
+              className="text-sm text-slate-500"
+            >
               Remember me
             </label>
           </div>
 
           {/* Login Button */}
-
           <button
             type="submit"
             disabled={loading}
@@ -255,17 +256,13 @@ export default function LoginPage() {
         </form>
 
         {/* Divider */}
-
         <div className="my-7 flex items-center gap-4">
           <div className="h-px flex-1 bg-slate-200" />
-
           <span className="text-xs text-slate-400">OR</span>
-
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
         {/* Google */}
-
         <button
           type="button"
           onClick={googleLogin}
@@ -275,7 +272,6 @@ export default function LoginPage() {
         </button>
 
         {/* Register */}
-
         <p className="mt-7 text-center text-sm text-slate-500">
           Don't have an account?{" "}
           <Link

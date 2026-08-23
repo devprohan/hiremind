@@ -105,6 +105,8 @@ const loginUser = async (req, res) => {
     );
 
     res.cookie("token", token, getCookieOptions(rememberMe));
+    console.log("TOKEN CREATED:", !!token);
+    console.log("COOKIE OPTIONS:", getCookieOptions(rememberMe));
 
     res.status(200).json({
       success: true,

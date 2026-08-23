@@ -18,6 +18,10 @@ const ProtectedRoute = ({ children }) => {
         setAuthenticated(true);
       } catch (error) {
         console.error("Authentication check failed:", error);
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", JSON.stringify(error.response?.data, null, 2));
+        console.log("HEADERS:", JSON.stringify(error.response?.headers, null, 2));
+
         setAuthenticated(false);
       } finally {
         setLoading(false);
