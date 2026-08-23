@@ -143,11 +143,9 @@ const googleLogin = async (req, res) => {
       getCookieOptions(false)
     );
 
-    const frontendURL = "http://localhost:5173";
+    const frontendURL = process.env.CLIENT_URL;
 
-    return res.redirect(
-      `${frontendURL}/dashboard`
-    );
+    return res.redirect(`${frontendURL}/dashboard`);
   } catch (error) {
     console.error("Google Login Error:", error);
 
