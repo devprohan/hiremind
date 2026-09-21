@@ -90,7 +90,6 @@ function ResumeCard({
 
   return (
     <div>
-      {/* YAHAN TERA ORIGINAL RESUMECARD JSX HONA CHAHIYE */}
     </div>
   );
 }

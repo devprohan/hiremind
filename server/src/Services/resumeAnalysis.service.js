@@ -5,7 +5,7 @@ const analyzeResume = async (resumeText) => {
     const prompt = `
 You are an expert ATS Resume Analyzer and Technical Recruiter.
 
-Analyze the resume carefully and return ONLY valid JSON.
+Analyze the resume carefully.
 
 Evaluation Guidelines:
 - Evaluate ATS compatibility out of 100.
@@ -17,141 +17,147 @@ Evaluation Guidelines:
 - Generate actionable improvement suggestions.
 
 Rules:
-1. Return ONLY valid JSON.
-2. Do not include markdown, explanations, comments, or code fences.
-3. Create skill categories dynamically based on the candidate's profession.
-4. Only include categories that contain at least one skill.
-5. Do not duplicate skills across categories.
-6. Use concise and meaningful category names.
-7. Use standard industry category names whenever possible.
-8. Every category value MUST be an array of strings.
-9. Never use numeric keys such as "0", "1", "2", etc.
-10. Never return skills as a flat numbered object.
-11. If a profession is non-technical, create profession-specific categories instead of software categories.
-12. Preserve the original skill names from the resume.
+1. Create skill categories dynamically based on the candidate's profession.
+2. Only include categories that contain at least one skill.
+3. Do not duplicate skills across categories.
+4. Use concise and meaningful category names.
+5. Use standard industry category names whenever possible.
+6. Every category value MUST be an array of strings.
+7. Never use numeric keys such as "0", "1", "2".
+8. Do not return skills as a flat numbered object.
+9. Preserve original skill names from the resume.
+10. Recommend only relevant missing skills.
 
-IMPORTANT:
-If any key inside "skills" or "missingSkills" is numeric ("0", "1", etc.), your response is INVALID.
-
-Examples of valid categories (examples only, do not force them):
-
-Software Engineer:
-{
-  "Programming Languages": ["Java", "Python"],
-  "Frontend": ["React", "HTML", "CSS"],
-  "Backend": ["Node.js", "Express"],
-  "Database": ["MongoDB"],
-  "Cloud": ["AWS"]
-}
-
-Mechanical Engineer:
-{
-  "CAD Tools": ["AutoCAD", "SolidWorks"],
-  "Manufacturing": ["Lean Manufacturing"],
-  "Mechanical Design": ["Machine Design"],
-  "Simulation": ["ANSYS"]
-}
-
-Doctor:
-{
-  "Clinical Skills": ["Patient Care", "Diagnosis"],
-  "Medical Procedures": ["Surgery"],
-  "Healthcare Software": ["Epic EMR"]
-}
-
-Accountant:
-{
-  "Accounting": ["GST", "Tally"],
-  "Finance": ["Financial Analysis"],
-  "ERP": ["SAP"]
-}
-
-Warehouse Manager:
-{
-  "Warehouse Operations": ["Inventory Management", "Picking"],
-  "Supply Chain": ["Logistics", "Distribution"],
-  "Safety": ["5S", "OSHA"]
-}
-
-Return the response in this exact JSON format:
-
-{
-  "atsScore": 0,
-  "breakdown": {
-    "content": 0,
-    "formatting": 0,
-    "skills": 0,
-    "keywords": 0
-  },
-  "summary": "",
-  "skills": {},
-  "missingSkills": {},
-  "strengths": [],
-  "weaknesses": [],
-  "suggestions": []
-}
-
-Scoring Rules:
+Scoring:
 - atsScore, content, formatting, skills and keywords must be integers between 0 and 100.
-- The breakdown should be consistent with the overall ATS score.
+- Breakdown should be consistent with overall ATS score.
 
 Summary:
 - Write a concise professional summary in 2-3 sentences.
 
 Strengths:
-- Return 3-6 concise bullet points.
+- Return 3-6 concise points.
 
 Weaknesses:
-- Return 3-6 concise bullet points.
+- Return 3-6 concise points.
 
 Suggestions:
 - Return 5-10 actionable suggestions ordered by priority.
 
-Skills:
-- Extract every important skill found in the resume.
-- Group skills into meaningful professional categories.
-- Categories must adapt to the candidate's profession.
-- Every category value must be an array of strings.
-- Do not create empty categories.
-- Do not use numeric category names.
-
-Missing Skills:
-- Recommend only skills relevant to the candidate's career path.
-- Group them into meaningful categories using the same structure as "skills".
-- Every category value must be an array of strings.
-- Do not create empty categories.
-- Do not use numeric category names.
-- Do not recommend unrelated technologies.
-
-Resume:
-${resumeText}
 Resume:
 ${resumeText}
 `;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
+
       contents: prompt,
+
+      config: {
+        responseMimeType: "application/json",
+
+        responseSchema: {
+          type: "object",
+
+          properties: {
+            atsScore: {
+              type: "integer"
+            },
+
+            breakdown: {
+              type: "object",
+              properties: {
+                content: { type: "integer" },
+                formatting: { type: "integer" },
+                skills: { type: "integer" },
+                keywords: { type: "integer" }
+              },
+              required: [
+                "content",
+                "formatting",
+                "skills",
+                "keywords"
+              ]
+            },
+
+            summary: {
+              type: "string"
+            },
+
+            skills: {
+              type: "object",
+              additionalProperties: {
+                type: "array",
+                items: {
+                  type: "string"
+                }
+              }
+            },
+
+            missingSkills: {
+              type: "object",
+              additionalProperties: {
+                type: "array",
+                items: {
+                  type: "string"
+                }
+              }
+            },
+
+            strengths: {
+              type: "array",
+              items: {
+                type: "string"
+              }
+            },
+
+            weaknesses: {
+              type: "array",
+              items: {
+                type: "string"
+              }
+            },
+
+            suggestions: {
+              type: "array",
+              items: {
+                type: "string"
+              }
+            }
+          },
+
+          required: [
+            "atsScore",
+            "breakdown",
+            "summary",
+            "skills",
+            "missingSkills",
+            "strengths",
+            "weaknesses",
+            "suggestions"
+          ]
+        }
+      }
     });
 
-    let text = response.text
+    const text = response.text;
 
-    if (typeof text === "function") {
-      text = text()
-    }
+    console.log("===== GEMINI RESPONSE =====");
+    console.log(text);
+    console.log("==========================");
 
-    // Remove markdown
-    text = text.replace(/```json/g, "");
-    text = text.replace(/```/g, "");
-    text = text.trim();
+    // Validate JSON
+    const parsedResult = JSON.parse(text);
 
-    return text;
-  }catch (error) {
-  console.error("Gemini Error:", error);
-  console.error("Message:", error.message);
-  console.error("Stack:", error.stack);
+    return parsedResult;
 
-  throw error;
+  } catch (error) {
+
+    console.error("Gemini Error:", error);
+    console.error("Message:", error.message);
+    console.error("Stack:", error.stack);
+
+    throw error;
   }
 };
 

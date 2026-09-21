@@ -31,7 +31,6 @@ export const registerUser = async (userData) => {
 // Login
 export const loginUser = async (userData) => {
   const response = await authAPI.post("/login", userData);
-
   const { user } = response.data;
 
   localStorage.removeItem("token");
@@ -70,3 +69,4 @@ export const googleLogin = () => {
   window.location.href =
     `${import.meta.env.VITE_API_URL}/auth/google`;
 };
+
